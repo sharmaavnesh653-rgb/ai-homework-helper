@@ -1,0 +1,77 @@
+---
+import Wordmark from './Wordmark.astro';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    heading: 'Study',
+    links: [
+      { href: '/solve', label: 'Homework solver' },
+      { href: '/notes', label: 'Study notes' },
+      { href: '/practice', label: 'Practice' },
+      { href: '/subjects', label: 'Subjects' },
+    ],
+  },
+  {
+    heading: 'Your work',
+    links: [
+      { href: '/saved', label: 'Saved notes' },
+      { href: '/history', label: 'Study history' },
+    ],
+  },
+  {
+    heading: 'Trust',
+    links: [
+      { href: '/for-teachers', label: 'For teachers' },
+      { href: '/#compare', label: "Why we're different" },
+      { href: '/#faq', label: 'FAQ' },
+    ],
+  },
+];
+---
+
+<footer class="mt-20 border-t border-line bg-sunken">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <div class="flex flex-col gap-10 md:flex-row md:justify-between">
+      <div class="max-w-xs space-y-3">
+        <Wordmark />
+        <p class="text-sm leading-relaxed text-ink-2">
+          A study companion built to make you understand the work — not to hand
+          you something to copy.
+        </p>
+        <ul class="space-y-1 pt-1 text-xs text-ink-3">
+          <li>No ads, on any plan</li>
+          <li>No essay “humanizer”</li>
+          <li>Cancel in one click</li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
+        {
+          columns.map((col) => (
+            <div class="space-y-2.5">
+              <h2 class="text-overline text-ink-3 uppercase">{col.heading}</h2>
+              <ul class="space-y-2 text-sm text-ink-2">
+                {col.links.map((link) => (
+                  <li>
+                    <a class="transition-colors hover:text-ink" href={link.href}>
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div
+      class="mt-10 flex flex-col gap-2.5 border-t border-line pt-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>&copy; {year} Stepwise. Built for students who want to actually learn.</p>
+      <p>Explanations are AI-generated. Check the reasoning before you turn work in.</p>
+    </div>
+  </div>
+</footer>

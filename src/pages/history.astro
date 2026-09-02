@@ -1,0 +1,21 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { HistoryList } from '../components/react/Library';
+---
+
+<Site
+  title="Study history — Stepwise"
+  description="Every question you've asked, so you can pick up where you left off."
+>
+  <PageHeader
+    width="medium"
+    overline="Study history"
+    title="What you've been working on"
+    lede="Every question you ask is logged here on this device. Use “Ask again” to reopen one in the solver."
+  />
+
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
+    <HistoryList client:load />
+  </div>
+</Site>

@@ -1,11 +1,589 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Site from '../layouts/Site.astro';
+import { MODES } from '../lib/types';
+import { SUBJECTS } from '../lib/curriculum';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const destinations = [
+  {
+    href: '/solve',
+    glyph: '✎',
+    title: 'Homework solver',
+    body: 'Type, paste or photograph a problem. Get separated reasoning steps, formulas and a diagram when one helps.',
+  },
+  {
+    href: '/notes',
+    glyph: '📓',
+    title: 'Study notes',
+    body: 'Pick your class, textbook and chapter. Get revision notes, then question that exact chapter in chat.',
+  },
+  {
+    href: '/practice',
+    glyph: '🎴',
+    title: 'Practice',
+    body: 'Flashcards and a quiz where every explanation names the misconception behind the wrong answer.',
+  },
+  {
+    href: '/subjects',
+    glyph: '🧭',
+    title: 'Subjects',
+    body: 'Eight subjects with chapter lists and example questions you can send straight to the solver.',
+  },
+];
+
+const steps = [
+  {
+    n: '01',
+    title: 'Give it the problem',
+    body: 'Type it, paste it, or drop in a photo of the page. Attach a PDF if the question lives in a worksheet.',
+  },
+  {
+    n: '02',
+    title: 'Choose how much help',
+    body: 'One hint if you are nearly there. A full walkthrough if you are lost. Or submit your own attempt to be checked.',
+  },
+  {
+    n: '03',
+    title: 'Finish it yourself',
+    body: 'Every answer names the rule it used and ends with a question only you can answer. That is the part that sticks.',
+  },
+];
+
+const comparison = [
+  {
+    them: 'Sells “A+ answers in seconds”, then adds an honour-code page that contradicts it',
+    us: 'Hint mode will not produce the answer — enforced in the product, not disclaimed in a footer',
+  },
+  {
+    them: 'Weekly billing that reads like pocket money and costs over $200 a year',
+    us: 'One monthly price, also shown as a yearly total. No weekly sleight of hand',
+  },
+  {
+    them: '“Credits” and “quotas” you cannot translate into actual homework',
+    us: 'Ask what you need. No credit maths, no meter anxiety',
+  },
+  {
+    them: 'Countdown banners, struck-through prices, “80% of users buy”',
+    us: 'The price is the price. No urgency theatre',
+  },
+  {
+    them: 'An “AI humanizer” sold beside an AI detector, to beat plagiarism checks',
+    us: 'We will never ship a humanizer. Every transcript is readable by a teacher',
+  },
+  {
+    them: 'Forty unrelated tools — voice cloning, headshots, background removal',
+    us: 'Four study tools that belong together, and nothing else',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is this cheating?',
+    a: 'The product is built so that it is not. Hint mode gives one nudge and refuses to produce the answer even if you push. Check mode reviews your own work and will not rewrite it. Walkthrough mode shows the reasoning and then hands you a question it deliberately leaves unanswered. You still do the thinking.',
+  },
+  {
+    q: 'What can I give it?',
+    a: 'Typed or pasted text, a photo of a page, or a PDF worksheet — up to four files at once. Maths and science problems, essay paragraphs, reading-comprehension questions, or your own half-finished attempt.',
+  },
+  {
+    q: 'Will it just make things up?',
+    a: 'It is instructed to say plainly when it is not sure rather than asserting a confident wrong answer, and never to claim your work is correct without checking it. It is still AI: verify the reasoning before you hand anything in.',
+  },
+  {
+    q: 'Where is my saved work stored?',
+    a: 'On your device, in your browser. Saved notes and history never leave it, which also means clearing your browser data clears them.',
+  },
+  {
+    q: 'Can my teacher see what I did?',
+    a: 'Yes, and that is deliberate. A session reads as a tutoring transcript — the question, the reasoning, the check question. Nothing is designed to be hidden from a teacher.',
+  },
+];
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Site
+  title="Stepwise — the AI study companion that actually teaches you"
+  description="Ask anything, understand everything. Step-by-step homework help, chapter revision notes, flashcards and quizzes — built so you can do the next one yourself."
+>
+  <!-- ================= Hero ================= -->
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="grid-faint pointer-events-none absolute inset-0 opacity-60"></div>
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-brand-soft/70 to-transparent"
+    >
+    </div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pt-14 pb-16 sm:px-6 sm:pt-20">
+      <div class="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
+        <div class="space-y-7">
+          <p
+            class="inline-flex items-center gap-2 rounded-full border border-brand/25 bg-brand-soft px-3 py-1 text-xs font-medium text-brand"
+          >
+            <span class="inline-block h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true"
+            ></span>
+            Built to be handed to a teacher
+          </p>
+
+          <h1 class="text-h1 sm:text-display text-ink">
+            Ask anything,<br /><span class="marker">understand everything.</span>
+          </h1>
+
+          <p class="max-w-xl text-lg leading-relaxed text-ink-2">
+            A study companion, not an answer machine. Photograph the problem and
+            get the reasoning in separated steps — with the formulas rendered, a
+            diagram when one helps, and a question at the end that only you can
+            answer.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <a
+              href="/solve"
+              class="rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white shadow-e2 transition-all duration-150 hover:bg-brand-hover hover:shadow-e3 active:translate-y-px"
+            >
+              Start Solving Here — free
+            </a>
+            <a
+              href="/notes"
+              class="rounded-lg border border-line bg-surface px-6 py-3 text-sm font-semibold text-ink transition-all duration-150 hover:border-line-strong hover:shadow-e1"
+            >
+              Generate chapter notes
+            </a>
+          </div>
+
+          <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-2">
+            {
+              ['No sign-up to try', 'No ads', 'No essay “humanizer”'].map((item) => (
+                <li class="flex items-center gap-1.5">
+                  <span class="text-brand" aria-hidden="true">✓</span>
+                  {item}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <!-- Real product surface, not a generic AI illustration -->
+        <div class="relative">
+          <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-e4">
+            <!-- window chrome -->
+            <div class="flex items-center gap-2 border-b border-line bg-sunken px-4 py-2.5">
+              <span class="h-2 w-2 rounded-full bg-line-strong" aria-hidden="true"></span>
+              <span class="h-2 w-2 rounded-full bg-line-strong" aria-hidden="true"></span>
+              <span class="ml-1.5 text-xs font-medium text-ink-3">
+                Physics · Grade 11 · Walkthrough
+              </span>
+            </div>
+
+            <!-- student question -->
+            <div class="flex justify-end px-4 pt-4">
+              <p
+                class="max-w-[80%] rounded-xl rounded-br-sm bg-ink px-3.5 py-2.5 text-sm leading-relaxed text-canvas"
+              >
+                A ball is thrown at 20 m/s at 30° above the horizontal. Find the
+                maximum height.
+              </p>
+            </div>
+
+            <!-- structured answer -->
+            <div class="space-y-4 px-4 py-4">
+              <div class="rounded-lg bg-sunken/70 px-3.5 py-2.5">
+                <p class="text-overline text-ink-3 uppercase">What you're being asked</p>
+                <p class="mt-1 text-sm leading-relaxed font-medium text-ink">
+                  Find the peak height of a projectile from its launch speed and angle.
+                </p>
+              </div>
+
+              <ol class="space-y-3.5">
+                <li class="flex gap-3">
+                  <span
+                    class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-[11px] font-semibold text-white"
+                    >1</span
+                  >
+                  <div class="min-w-0 space-y-1.5">
+                    <p class="text-sm font-semibold text-ink">
+                      Split the velocity into components
+                    </p>
+                    <p class="text-sm leading-relaxed text-ink-2">
+                      Only the vertical part decides the height, so isolate it first.
+                    </p>
+                    <div class="rounded-md bg-sunken px-3 py-2 font-mono text-xs text-ink">
+                      v<sub>y</sub> = 20 · sin(30°) = 10 m/s
+                    </div>
+                  </div>
+                </li>
+                <li class="flex gap-3">
+                  <span
+                    class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-[11px] font-semibold text-white"
+                    >2</span
+                  >
+                  <div class="min-w-0 space-y-1.5">
+                    <p class="text-sm font-semibold text-ink">
+                      Use the equation with no time in it
+                    </p>
+                    <p class="text-sm leading-relaxed text-ink-2">
+                      At the peak the vertical velocity is zero — that is the condition
+                      that unlocks it.
+                    </p>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="rounded-lg border-l-2 border-brand bg-brand-soft px-3.5 py-2.5">
+                <p class="text-overline text-brand uppercase">Check yourself</p>
+                <p class="mt-1 text-sm leading-relaxed text-ink">
+                  Why does the horizontal component not affect the maximum height?
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5 border-t border-line pt-3">
+                {
+                  ['Explain simpler', 'More detail', 'Practise this', 'Save to notes'].map(
+                    (label) => (
+                      <span
+                        class="rounded-lg border border-line px-2.5 py-1 text-xs font-medium text-ink-2"
+                      >
+                        {label}
+                      </span>
+                    ),
+                  )
+                }
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="absolute -right-2 -bottom-4 hidden rotate-[-2deg] rounded-lg border border-line bg-accent-soft px-3 py-2 text-xs font-medium text-ink shadow-e2 sm:block"
+          >
+            The height is <em>yours</em> to finish.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Destinations ================= -->
+  <section class="border-b border-line bg-surface">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div class="max-w-2xl space-y-2.5">
+        <h2 class="text-h2 text-ink">Four tools that belong together</h2>
+        <p class="text-ink-2">
+          Not forty. Each one is a place you go with a purpose, not a tab in a
+          dashboard.
+        </p>
+      </div>
+
+      <div class="mt-9 grid gap-4 sm:grid-cols-2">
+        {
+          destinations.map((d) => (
+            <a
+              href={d.href}
+              class="group flex gap-4 rounded-xl border border-line bg-canvas p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-e2"
+            >
+              <span
+                class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-soft text-lg text-brand"
+                aria-hidden="true"
+              >
+                {d.glyph}
+              </span>
+              <div class="space-y-1.5">
+                <h3 class="text-h3 flex items-center gap-1.5 text-ink">
+                  {d.title}
+                  <span
+                    class="text-brand opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                </h3>
+                <p class="text-sm leading-relaxed text-ink-2">{d.body}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Modes ================= -->
+  <section id="how" class="scroll-mt-20 border-b border-line">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div class="max-w-2xl space-y-2.5">
+        <h2 class="text-h2 text-ink">You decide how much help you get</h2>
+        <p class="text-ink-2">
+          Three genuinely different behaviours — and the tutor is held to whichever
+          you pick.
+        </p>
+      </div>
+
+      <div class="mt-9 grid gap-4 md:grid-cols-3">
+        {
+          MODES.map((mode, i) => (
+            <article class="space-y-2.5 rounded-xl border border-line bg-surface p-5 shadow-e1">
+              <span class="text-h2 block text-accent">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="text-h3 text-ink">{mode.label}</h3>
+              <p class="text-sm leading-relaxed text-ink-2">{mode.blurb}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <ol class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          steps.map((step) => (
+            <li class="space-y-2.5 border-t-2 border-line pt-4">
+              <span class="text-overline text-brand uppercase">{step.n}</span>
+              <h3 class="text-h3 text-ink">{step.title}</h3>
+              <p class="text-sm leading-relaxed text-ink-2">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= Subjects strip ================= -->
+  <section class="border-b border-line bg-surface">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="max-w-xl space-y-2">
+          <h2 class="text-h2 text-ink">Eight subjects, with real chapters</h2>
+          <p class="text-ink-2">
+            Not a 70-item dropdown. Each subject has textbook chapters the notes
+            generator actually works from.
+          </p>
+        </div>
+        <a
+          href="/subjects"
+          class="rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+        >
+          Browse subjects
+        </a>
+      </div>
+
+      <ul class="mt-8 flex flex-wrap gap-2.5">
+        {
+          SUBJECTS.map((s) => (
+            <li>
+              <a
+                href="/subjects"
+                class="flex items-center gap-2 rounded-lg border border-line bg-canvas px-3.5 py-2 text-sm font-medium text-ink-2 transition-all hover:-translate-y-0.5 hover:shadow-e1"
+              >
+                <span
+                  class="text-base"
+                  style={`color: var(--color-${s.hue})`}
+                  aria-hidden="true"
+                >
+                  {s.glyph}
+                </span>
+                {s.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= Comparison ================= -->
+  <section id="compare" class="scroll-mt-20 border-b border-line">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div class="max-w-2xl space-y-2.5">
+        <h2 class="text-h2 text-ink">What we refuse to copy from this industry</h2>
+        <p class="text-ink-2">
+          We read our competitors' pricing pages and honour codes properly. Here
+          is what we found, and what we do instead.
+        </p>
+      </div>
+
+      <div class="mt-9 max-w-5xl overflow-hidden rounded-xl border border-line bg-surface">
+        <div
+          class="hidden grid-cols-2 gap-6 border-b border-line bg-sunken px-5 py-2.5 sm:grid"
+        >
+          <span class="text-overline text-ink-3 uppercase">
+            Typical AI homework site
+          </span>
+          <span class="text-overline text-ink-3 uppercase">Stepwise</span>
+        </div>
+
+        <ul class="divide-y divide-line">
+          {
+            comparison.map((row) => (
+              <li class="grid gap-3 px-5 py-4 sm:grid-cols-2 sm:gap-6">
+                <p class="flex gap-2.5 text-sm leading-relaxed text-ink-2">
+                  <span class="mt-0.5 shrink-0 font-semibold text-danger" aria-hidden="true">
+                    ✕
+                  </span>
+                  <span>{row.them}</span>
+                </p>
+                <p class="flex gap-2.5 text-sm leading-relaxed text-ink">
+                  <span class="mt-0.5 shrink-0 font-semibold text-brand" aria-hidden="true">
+                    ✓
+                  </span>
+                  <span>{row.us}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Pricing ================= -->
+  <section id="pricing" class="scroll-mt-20 border-b border-line bg-surface">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div class="max-w-2xl space-y-2.5">
+        <h2 class="text-h2 text-ink">Pricing without the tricks</h2>
+        <p class="text-ink-2">
+          Two options, each priced per month <em>and</em> per year — because quoting
+          a weekly figure to make $200 sound like $4 is a choice.
+        </p>
+      </div>
+
+      <div class="mt-9 grid max-w-4xl gap-5 md:grid-cols-2">
+        <article class="flex flex-col rounded-xl border border-line bg-canvas p-6">
+          <h3 class="text-h3 text-ink">Free</h3>
+          <p class="mt-1 text-sm text-ink-2">
+            Enough to decide whether this actually helps you.
+          </p>
+          <p class="text-h1 mt-5 text-ink">
+            $0<span class="text-base font-normal text-ink-3">/month</span>
+          </p>
+          <ul class="mt-6 flex-1 space-y-2.5 text-sm text-ink-2">
+            {
+              [
+                'All three help modes',
+                'A few questions a day',
+                'Photo and PDF upload',
+                'No ads, no card required',
+              ].map((f) => (
+                <li class="flex gap-2">
+                  <span class="text-brand" aria-hidden="true">✓</span>
+                  {f}
+                </li>
+              ))
+            }
+          </ul>
+          <a
+            href="/solve"
+            class="mt-7 rounded-lg border border-line-strong px-5 py-2.5 text-center text-sm font-semibold text-ink transition-colors hover:bg-sunken"
+          >
+            Start now
+          </a>
+        </article>
+
+        <article class="relative flex flex-col rounded-xl border-2 border-brand bg-canvas p-6">
+          <span
+            class="absolute -top-3 left-6 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white"
+          >
+            For a full term
+          </span>
+          <h3 class="text-h3 text-ink">Unlimited</h3>
+          <p class="mt-1 text-sm text-ink-2">
+            For when it's carrying you through a whole subject.
+          </p>
+          <p class="text-h1 mt-5 text-ink">
+            $8<span class="text-base font-normal text-ink-3">/month</span>
+          </p>
+          <p class="mt-1 text-sm text-ink-3">
+            That's <strong class="font-semibold text-ink-2">$96 a year</strong> —
+            stated plainly, up front.
+          </p>
+          <ul class="mt-6 flex-1 space-y-2.5 text-sm text-ink-2">
+            {
+              [
+                'Unlimited questions',
+                'Chapter notes for every subject',
+                'Flashcards and quizzes',
+                'Cancel in one click, refunds honoured',
+              ].map((f) => (
+                <li class="flex gap-2">
+                  <span class="text-brand" aria-hidden="true">✓</span>
+                  {f}
+                </li>
+              ))
+            }
+          </ul>
+          <a
+            href="/solve"
+            class="mt-7 rounded-lg bg-brand px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+          >
+            Try free first
+          </a>
+        </article>
+      </div>
+
+      <p class="mt-6 text-sm text-ink-3">
+        No countdown timers. No struck-through prices we never charged. No
+        “someone just upgraded” pop-ups. If we ever run a discount, it will be
+        refundable like everything else.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= Teachers ================= -->
+  <section class="border-b border-line bg-ink">
+    <div
+      class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 md:flex-row md:items-center md:justify-between"
+    >
+      <div class="max-w-xl space-y-2">
+        <h2 class="text-h2 text-canvas">Teachers: read this before you block us</h2>
+        <p class="text-sm leading-relaxed text-canvas/70">
+          We know why AI homework tools get banned. This is the one you would
+          design if you were trying to prevent that — hint-first help, no
+          rewriting of student work, and transcripts you can inspect.
+        </p>
+      </div>
+      <a
+        href="/for-teachers"
+        class="shrink-0 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
+      >
+        Our commitments
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq" class="scroll-mt-20">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <div class="max-w-3xl">
+      <h2 class="text-h2 text-ink">Straight answers</h2>
+
+      <div class="mt-8 divide-y divide-line border-y border-line">
+        {
+          faqs.map((faq) => (
+            <details class="group py-4">
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-medium text-ink"
+              >
+                {faq.q}
+                <span
+                  class="shrink-0 text-xl leading-none text-ink-3 transition-transform duration-200 group-open:rotate-45"
+                  aria-hidden="true"
+                >
+                  +
+                </span>
+              </summary>
+              <p class="mt-3 text-sm leading-relaxed text-ink-2">{faq.a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <div class="mt-12 rounded-xl bg-brand-soft p-7 text-center">
+        <h2 class="text-h2 text-ink">Go and get unstuck</h2>
+        <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-2">
+          No account, no card, no ads. Paste the question that's been sitting there
+          for twenty minutes.
+        </p>
+        <a
+          href="/solve"
+          class="mt-5 inline-block rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white shadow-e2 transition-all hover:bg-brand-hover hover:shadow-e3"
+        >
+          Open the solver
+        </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Site>

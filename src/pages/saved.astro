@@ -1,0 +1,21 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SavedNotesList } from '../components/react/Library';
+---
+
+<Site
+  title="Saved work — Stepwise"
+  description="Every walkthrough and chapter of notes you saved, stored on this device."
+>
+  <PageHeader
+    width="medium"
+    overline="Saved work"
+    title="Your notes"
+    lede="Anything you saved from a walkthrough or a chapter of study notes. Stored on this device — nothing is uploaded."
+  />
+
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
+    <SavedNotesList client:load />
+  </div>
+</Site>

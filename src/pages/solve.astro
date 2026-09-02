@@ -1,0 +1,21 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SolveWorkspace from '../components/react/SolveWorkspace';
+---
+
+<Site
+  title="Homework solver — Stepwise"
+  description="Ask a homework question, paste it, or photograph it. Get the reasoning in clear separated steps, with formulas, diagrams and a question only you can answer."
+>
+  <PageHeader
+    width="narrow"
+    overline="Homework solver"
+    title="Ask anything, understand everything"
+    lede="Type it, paste it, or drop in a photo of the page. Choose a single hint, a full walkthrough, or a check of your own attempt."
+  />
+
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+    <SolveWorkspace client:load />
+  </div>
+</Site>

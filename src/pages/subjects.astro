@@ -1,0 +1,86 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SUBJECTS, BOOKS, EXAMPLES } from '../lib/curriculum';
+---
+
+<Site
+  title="Subjects — Stepwise"
+  description="Mathematics, physics, chemistry, biology, history, English, geography and computer science — with the chapters and example questions covered in each."
+>
+  <PageHeader
+    overline="Subjects"
+    title="What you can get help with"
+    lede="Eight subjects, each with textbook chapters for study notes and example questions you can send straight to the solver."
+  />
+
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <div class="grid gap-5 md:grid-cols-2">
+      {
+        SUBJECTS.map((subject) => {
+          const books = BOOKS[subject.id] ?? [];
+          const chapters = books.flatMap((b) => b.chapters);
+          const examples = EXAMPLES.filter((e) => e.subject === subject.id);
+
+          return (
+            <article class="group flex flex-col rounded-xl border border-line bg-surface p-5 shadow-e1 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-e3">
+              <div class="flex items-start gap-3.5">
+                <span
+                  class="grid h-11 w-11 shrink-0 place-items-center rounded-lg text-lg"
+                  style={`background: color-mix(in oklab, var(--color-${subject.hue}) 12%, transparent); color: var(--color-${subject.hue})`}
+                  aria-hidden="true"
+                >
+                  {subject.glyph}
+                </span>
+                <div class="min-w-0 flex-1">
+                  <h2 class="text-h3 text-ink">{subject.name}</h2>
+                  <p class="mt-1 text-sm leading-relaxed text-ink-2">
+                    {subject.blurb}
+                  </p>
+                </div>
+              </div>
+
+              <dl class="mt-4 flex gap-6 text-sm">
+                <div>
+                  <dt class="text-overline text-ink-3 uppercase">Chapters</dt>
+                  <dd class="mt-0.5 font-semibold text-ink">{chapters.length}</dd>
+                </div>
+                <div>
+                  <dt class="text-overline text-ink-3 uppercase">Textbooks</dt>
+                  <dd class="mt-0.5 font-semibold text-ink">{books.length}</dd>
+                </div>
+              </dl>
+
+              {examples.length > 0 && (
+                <div class="mt-4 space-y-2">
+                  <p class="text-overline text-ink-3 uppercase">Example question</p>
+                  <a
+                    href={`/solve?q=${encodeURIComponent(examples[0].question)}`}
+                    class="block rounded-lg border border-line bg-canvas px-3.5 py-2.5 text-sm leading-relaxed text-ink-2 transition-all hover:border-brand/40 hover:text-brand"
+                  >
+                    {examples[0].question}
+                  </a>
+                </div>
+              )}
+
+              <div class="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
+                <a
+                  href="/solve"
+                  class="rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                >
+                  Ask a question
+                </a>
+                <a
+                  href="/notes"
+                  class="rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+                >
+                  Chapter notes
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</Site>

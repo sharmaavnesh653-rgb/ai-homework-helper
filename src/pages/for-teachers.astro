@@ -1,0 +1,137 @@
+---
+import Site from '../layouts/Site.astro';
+
+const commitments = [
+  {
+    title: 'Hint mode cannot be talked into the answer',
+    body:
+      'The instruction is explicit: give one nudge, never the solution, never the remaining steps — including at the end of the reply. A student who wants the answer has to reason their way to it.',
+  },
+  {
+    title: 'We never rewrite a student’s work',
+    body:
+      '“Check my work” names what’s right, finds the first place the reasoning breaks, and explains the misconception behind it. It is instructed not to produce a corrected version. The improved draft has to come from them.',
+  },
+  {
+    title: 'We will never ship an “AI humanizer”',
+    body:
+      'Several tools in this category sell a detector and a humanizer side by side — one product to flag AI text, another to disguise it. That is a business model built on defeating you. We won’t build it at any price.',
+  },
+  {
+    title: 'Every reply names its method',
+    body:
+      'Steps are tied to the actual rule or concept in play — the distributive property, a thesis statement, conservation of momentum — so students build vocabulary they can carry into class, not just a number to write down.',
+  },
+  {
+    title: 'It admits when it isn’t sure',
+    body:
+      'The tutor is instructed to flag uncertainty rather than assert a confident wrong answer, and never to confirm work as correct without checking it. Students are told plainly to verify before submitting.',
+  },
+  {
+    title: 'Transcripts are designed to be read by you',
+    body:
+      'A session looks like a tutoring record: the question, the reasoning, the check question left unanswered. Nothing is structured to be hidden from a teacher, because nothing needs to be.',
+  },
+];
+
+const limits = [
+  'It is a language model. It can be confidently wrong, especially on multi-step arithmetic and anything requiring a source it hasn’t been given.',
+  'It cannot see your assignment brief, rubric, or what you covered in class unless the student pastes it in.',
+  'A determined student can still use walkthrough mode and copy the reasoning. Hint mode raises the effort of doing that; it does not make it impossible.',
+  'We are not a substitute for you. It is a patient explainer for the moment a student is stuck at 9pm with nobody to ask.',
+];
+---
+
+<Site
+  title="For teachers — Stepwise"
+  description="Why Stepwise is built to be inspected: hint-first help, no rewriting of student work, no AI humanizer, and transcripts teachers can read."
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="grid-faint pointer-events-none absolute inset-0 opacity-60"></div>
+    <div class="relative mx-auto max-w-3xl px-5 pt-16 pb-14">
+      <p class="text-overline text-brand uppercase">
+        For teachers
+      </p>
+      <h1 class="mt-3 text-h1 sm:text-display">
+        Built to survive <span class="marker">your scrutiny.</span>
+      </h1>
+      <p class="mt-5 text-lg leading-relaxed text-ink-2">
+        Most AI homework tools are banned in classrooms for good reason: they are
+        answer vending machines with a policy page bolted on. We would rather
+        show you exactly how this one behaves and let you decide.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-3xl px-5 py-16">
+      <h2 class="text-h2">Six commitments</h2>
+      <p class="mt-2 text-ink-2">
+        These are properties of the product, not promises in a footer.
+      </p>
+
+      <div class="mt-9 space-y-7">
+        {
+          commitments.map((item, i) => (
+            <article class="flex gap-5">
+              <span
+                class="text-h2 shrink-0 text-accent"
+                aria-hidden="true"
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div class="space-y-1.5">
+                <h3 class="text-h3">{item.title}</h3>
+                <p class="text-sm leading-relaxed text-ink-2">{item.body}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- The honest-limits section: the thing no competitor publishes -->
+  <section class="border-y border-line bg-sunken">
+    <div class="mx-auto max-w-3xl px-5 py-16">
+      <h2 class="text-h2">What it can’t do</h2>
+      <p class="mt-2 text-ink-2">
+        You will not find this section on a competitor's site. It is the fastest
+        way to tell whether a tool is being straight with you.
+      </p>
+
+      <ul class="mt-8 space-y-4">
+        {
+          limits.map((limit) => (
+            <li class="flex gap-3 text-sm leading-relaxed text-ink-2">
+              <span class="mt-0.5 shrink-0 font-semibold text-danger" aria-hidden="true">
+                —
+              </span>
+              <span>{limit}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-3xl px-5 py-16">
+      <div class="rounded-xl border border-line bg-surface p-8">
+        <h2 class="text-2xl font-semibold">Try to break it</h2>
+        <p class="mt-3 text-sm leading-relaxed text-ink-2">
+          The most useful thing you can do is take a question from your own
+          homework set, put it in hint mode, and push it for the answer. Then put
+          a flawed student paragraph into check mode and see whether it rewrites
+          it. That will tell you more than any page we could write.
+        </p>
+        <a
+          href="/solve"
+          class="mt-6 inline-block rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-deep"
+        >
+          Open the tutor
+        </a>
+      </div>
+    </div>
+  </section>
+</Site>

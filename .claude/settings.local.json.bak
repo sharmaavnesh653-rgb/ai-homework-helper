@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "ask": [
+      "claude code will ask for every permissions"
+    ]
+  }
+}

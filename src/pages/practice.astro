@@ -1,0 +1,21 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHeader from '../components/PageHeader.astro';
+import PracticeWorkspace from '../components/react/PracticeWorkspace';
+---
+
+<Site
+  title="Practice — Stepwise"
+  description="Turn any topic into flashcards and a quiz that explains why each wrong answer is tempting."
+>
+  <PageHeader
+    width="narrow"
+    overline="Practice"
+    title="Drill it until it sticks"
+    lede="Flashcards for recall, then a quiz where every explanation covers the misconception behind the wrong answer — not just which letter was right."
+  />
+
+  <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+    <PracticeWorkspace client:load />
+  </div>
+</Site>

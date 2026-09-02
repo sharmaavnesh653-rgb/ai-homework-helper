@@ -1,0 +1,4 @@
+{
+  "buildCommand": "node ./node_modules/astro/bin/astro.mjs build",
+  "framework": "astro"
+}

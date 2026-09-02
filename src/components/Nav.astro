@@ -1,0 +1,101 @@
+---
+import Wordmark from './Wordmark.astro';
+import ThemeToggle from './react/ThemeToggle';
+
+const { pathname } = Astro.url;
+
+const links = [
+  { href: '/dashboard', label: '⚡ Split Studio' },
+  { href: '/solve', label: 'Homework solver' },
+  { href: '/notes', label: 'Study notes' },
+  { href: '/subjects', label: 'Subjects' },
+  { href: '/practice', label: 'Practice' },
+  { href: '/saved', label: 'Saved' },
+  { href: '/history', label: 'History' },
+];
+
+const isActive = (href: string) =>
+  pathname === href || pathname.startsWith(`${href}/`);
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md">
+  <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+    <a href="/" class="shrink-0" aria-label="Stepwise home">
+      <Wordmark />
+    </a>
+
+    <!-- Desktop nav -->
+    <nav aria-label="Main" class="ml-4 hidden flex-1 items-center gap-1 lg:flex">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150',
+              isActive(link.href)
+                ? 'bg-brand-soft text-brand'
+                : 'text-ink-2 hover:bg-sunken hover:text-ink',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2 lg:ml-0">
+      <ThemeToggle client:load />
+      <a
+        href="/solve"
+        class="hidden rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-e2 transition-all duration-150 hover:bg-brand-hover hover:shadow-e3 active:translate-y-px sm:inline-block"
+      >
+        Start Solving Here
+      </a>
+
+      <!-- Mobile menu: native details so it works without JS -->
+      <details class="relative lg:hidden">
+        <summary
+          class="grid h-9 w-9 cursor-pointer list-none place-items-center rounded-lg border border-line text-ink-2 transition-colors hover:text-ink"
+          aria-label="Open menu"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M2 4h12M2 8h12M2 12h12"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </summary>
+        <nav
+          aria-label="Mobile"
+          class="animate-fade absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-line bg-raised p-1.5 shadow-e3"
+        >
+          {
+            links.map((link) => (
+              <a
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                class:list={[
+                  'block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                  isActive(link.href)
+                    ? 'bg-brand-soft text-brand'
+                    : 'text-ink-2 hover:bg-sunken hover:text-ink',
+                ]}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+          <a
+            href="/for-teachers"
+            class="block rounded-lg px-3 py-2.5 text-sm font-medium text-ink-2 transition-colors hover:bg-sunken hover:text-ink"
+          >
+            For teachers
+          </a>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>

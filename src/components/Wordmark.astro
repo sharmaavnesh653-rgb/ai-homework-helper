@@ -1,0 +1,27 @@
+---
+/*
+  Wordmark: a stepped chevron (the "step by step" idea) plus the name.
+  Inline SVG — no network request, inherits currentColor.
+*/
+---
+
+<span class="flex items-center gap-2 text-ink">
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 28 28"
+    fill="none"
+    aria-hidden="true"
+    class="shrink-0"
+  >
+    <rect width="28" height="28" rx="8" fill="var(--color-brand)" />
+    <path
+      d="M7 17.5L11 13.5l3.5 3.5L21 10.5"
+      stroke="var(--color-accent)"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span class="text-[17px] font-semibold tracking-[-0.02em]">Stepwise</span>
+</span>

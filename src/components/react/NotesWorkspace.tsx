@@ -276,33 +276,33 @@ export default function NotesWorkspace() {
                   onClick={() => send(`Explain the core topic of "${notes.title}" in detail.`)}
                   className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
                 >
-                  💡 Explain this topic
+                  Explain this topic
                 </button>
                 <button
                   type="button"
                   onClick={() => send(`Explain "${notes.title}" with a simpler real-world analogy.`)}
                   className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
                 >
-                  🌱 Simplify
+                  Simplify
                 </button>
                 <button
                   type="button"
                   onClick={() => send(`Give a step-by-step example problem for "${notes.title}".`)}
                   className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
                 >
-                  📝 Give an example
+                  Give an example
                 </button>
                 <a
                   href={`/practice?topic=${encodeURIComponent(notes.title)}&subject=${subject || ''}&grade=${grade || ''}`}
                   className="rounded-lg border border-brand/30 bg-brand-soft px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all"
                 >
-                  🎯 Quiz me
+                  Quiz me
                 </a>
                 <a
                   href={`/flashcards?topic=${encodeURIComponent(notes.title)}&subject=${subject || ''}&grade=${grade || ''}`}
                   className="rounded-lg border border-brand/30 bg-brand-soft px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all"
                 >
-                  🎴 Make flashcards
+                  Make flashcards
                 </a>
               </div>
             </header>

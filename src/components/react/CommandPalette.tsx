@@ -9,14 +9,14 @@ interface NavItem {
 }
 
 const ITEMS: NavItem[] = [
-  { title: 'Homework Helper', desc: 'Ask questions, get step-by-step reasoning & formulas', href: '/solve', icon: '✎', category: 'Study Hubs' },
-  { title: 'Study Notes', desc: 'Structured chapter notes & anchored AI study chat', href: '/notes', icon: '📓', category: 'Study Hubs' },
-  { title: 'Subjects Directory', desc: 'Explore 8 subjects with chapter lists and examples', href: '/subjects', icon: '🧭', category: 'Study Hubs' },
-  { title: 'Practice & Quizzes', desc: 'Misconception-driven quizzes and instant scoring', href: '/practice', icon: '🎴', category: 'Practice & Visuals' },
-  { title: 'Flashcards', desc: 'Interactive flashcards connected to your learning', href: '/flashcards', icon: '🎴', category: 'Practice & Visuals' },
-  { title: 'Diagrams & Concept Maps', desc: 'Generate visual mindmaps, flowcharts & timelines', href: '/diagrams', icon: '🧠', category: 'Practice & Visuals' },
-  { title: 'Saved Work Library', desc: 'Your saved solutions, revision notes & flashcards', href: '/saved', icon: '💾', category: 'Library' },
-  { title: 'Question History', desc: 'Browse and revisit previous homework sessions', href: '/history', icon: '🕒', category: 'Library' },
+  { title: 'Homework Helper', desc: 'Ask questions, get step-by-step reasoning & formulas', href: '/solve', icon: 'H', category: 'Study Hubs' },
+  { title: 'Study Notes', desc: 'Structured chapter notes & anchored AI study chat', href: '/notes', icon: 'N', category: 'Study Hubs' },
+  { title: 'Subjects Directory', desc: 'Explore 8 subjects with chapter lists and examples', href: '/subjects', icon: 'S', category: 'Study Hubs' },
+  { title: 'Practice & Quizzes', desc: 'Misconception-driven quizzes and instant scoring', href: '/practice', icon: 'P', category: 'Practice & Visuals' },
+  { title: 'Flashcards', desc: 'Interactive flashcards connected to your learning', href: '/flashcards', icon: 'F', category: 'Practice & Visuals' },
+  { title: 'Diagrams & Concept Maps', desc: 'Generate visual mindmaps, flowcharts & timelines', href: '/diagrams', icon: 'D', category: 'Practice & Visuals' },
+  { title: 'Saved Work Library', desc: 'Your saved solutions, revision notes & flashcards', href: '/saved', icon: 'L', category: 'Library' },
+  { title: 'Question History', desc: 'Browse and revisit previous homework sessions', href: '/history', icon: 'H', category: 'Library' },
 ];
 
 export default function CommandPalette() {
@@ -51,7 +51,6 @@ export default function CommandPalette() {
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-3 transition-colors hover:border-line-strong hover:text-ink"
       >
-        <span aria-hidden="true">🔍</span>
         <span className="hidden sm:inline">Search destinations...</span>
         <kbd className="hidden sm:inline-block rounded border border-line-strong bg-sunken px-1.5 py-0.5 text-[10px] font-mono text-ink-2">
           ⌘K

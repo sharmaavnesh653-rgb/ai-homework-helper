@@ -111,10 +111,10 @@ export default function NoteGPTWorkspace() {
         <div className="flex items-center gap-3">
           <a href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand font-bold text-white shadow-e2">
-              N
+              S
             </span>
             <span className="text-base font-extrabold tracking-tight text-ink hidden sm:inline-block">
-              Note<span className="text-brand">GPT</span> <span className="text-xs font-normal text-ink-3">Studio</span>
+              Stepwise <span className="text-xs font-normal text-ink-3">Studio</span>
             </span>
           </a>
 
@@ -131,11 +131,11 @@ export default function NoteGPTWorkspace() {
         {/* Center: Quick Tab Switchers (Desktop) */}
         <nav className="hidden lg:flex items-center gap-1 rounded-xl border border-line bg-sunken/60 p-1">
           {[
-            { id: 'summarizer', label: '✨ AI Summarizer' },
-            { id: 'pdf', label: '📄 PDF Reader' },
-            { id: 'flashcards', label: '🎴 Flashcards' },
-            { id: 'mindmap', label: '🧠 Mindmap' },
-            { id: 'solver', label: '✎ Homework Solver' },
+            { id: 'summarizer', label: 'AI Summarizer' },
+            { id: 'pdf', label: 'PDF Reader' },
+            { id: 'flashcards', label: 'Flashcards' },
+            { id: 'mindmap', label: 'Mindmap' },
+            { id: 'solver', label: 'Homework Solver' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -160,7 +160,7 @@ export default function NoteGPTWorkspace() {
               type="button"
               className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition-all hover:border-brand/40 hover:shadow-e1"
             >
-              <span>📥 Export</span>
+              <span>Export</span>
               <span className="text-ink-3">▼</span>
             </button>
             <div className="absolute right-0 top-full mt-1 hidden group-hover:block w-36 rounded-xl border border-line bg-surface p-1 shadow-e3 z-50">
@@ -215,7 +215,7 @@ export default function NoteGPTWorkspace() {
             mobileTab === 'source' ? 'bg-brand text-white shadow-e1' : 'text-ink-2 hover:text-ink'
           }`}
         >
-          📹 Source & Video View
+          Source & Video View
         </button>
         <button
           type="button"
@@ -224,7 +224,7 @@ export default function NoteGPTWorkspace() {
             mobileTab === 'workspace' ? 'bg-brand text-white shadow-e1' : 'text-ink-2 hover:text-ink'
           }`}
         >
-          ⚡ AI Notes & Chat
+          AI Notes & Chat
         </button>
       </div>
 
@@ -245,9 +245,9 @@ export default function NoteGPTWorkspace() {
           <div className="flex items-center justify-between border-b border-line bg-surface px-4 py-2">
             <div className="flex gap-1 rounded-lg bg-sunken p-0.5">
               {[
-                { id: 'media', label: '📹 Media Player' },
-                { id: 'transcript', label: '📝 Transcript' },
-                { id: 'file', label: '📁 Uploaded File' },
+                { id: 'media', label: 'Media Player' },
+                { id: 'transcript', label: 'Transcript' },
+                { id: 'file', label: 'Uploaded File' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -297,7 +297,7 @@ export default function NoteGPTWorkspace() {
               <div className="space-y-3 rounded-xl border border-line bg-surface p-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-ink-3 border-b border-line pb-2">
                   <span>Timestamped Transcript</span>
-                  <span>Search 🔍</span>
+                  <span>Search</span>
                 </div>
                 <div className="space-y-3.5 text-xs leading-relaxed">
                   {SAMPLE_TIMESTAMPS.map((t) => (
@@ -320,15 +320,17 @@ export default function NoteGPTWorkspace() {
             )}
 
             {leftTab === 'file' && (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-line p-8 text-center bg-surface">
-                <span className="text-4xl mb-2">📄</span>
-                <h4 className="text-sm font-semibold text-ink">Upload Lecture PDF / Audio</h4>
-                <p className="text-xs text-ink-3 mt-1 max-w-xs">
-                  Drag and drop your PDF worksheet, textbook chapter, or MP3 recording here
+              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-line bg-surface/80 p-8 text-center space-y-3">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-soft text-brand font-bold text-lg">
+                  PDF
+                </div>
+                <h4 className="text-sm font-bold text-ink">Drop your lecture notes or PDF here</h4>
+                <p className="text-xs text-ink-3 max-w-xs leading-relaxed">
+                  Supports PDF, DOCX, and image formats up to 25MB for AI analysis.
                 </p>
                 <button
                   type="button"
-                  className="mt-4 rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white shadow-e2 hover:bg-brand-hover transition-colors"
+                  className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white shadow-e1 hover:bg-brand-hover transition-colors"
                 >
                   Choose File
                 </button>
@@ -375,11 +377,11 @@ export default function NoteGPTWorkspace() {
             {/* Right Panel Main Tabs */}
             <div className="flex gap-1 overflow-x-auto scroll-slim">
               {[
-                { id: 'summary', label: '✨ AI Summary' },
-                { id: 'takeaways', label: '💡 Key Takeaways' },
-                { id: 'mindmap', label: '🧠 Mindmap Diagram' },
-                { id: 'notes', label: '📝 Interactive Notes' },
-                { id: 'chat', label: '💬 AI Q&A Chat' },
+                { id: 'summary', label: 'AI Summary' },
+                { id: 'takeaways', label: 'Key Takeaways' },
+                { id: 'mindmap', label: 'Mindmap Diagram' },
+                { id: 'notes', label: 'Interactive Notes' },
+                { id: 'chat', label: 'AI Q&A Chat' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -409,7 +411,7 @@ export default function NoteGPTWorkspace() {
                 type="button"
                 className="rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-2 hover:border-line-strong hover:text-ink transition-colors"
               >
-                ✨ AI Rewrite
+                AI Rewrite
               </button>
               <button
                 type="button"

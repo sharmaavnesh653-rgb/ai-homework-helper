@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Combobox, { type Option } from './Combobox';
+import TypewriterHeading from './TypewriterHeading';
 import {
   GRADES,
   SUBJECTS,
@@ -215,25 +216,30 @@ export default function Composer({
         />
       </div>
 
-      {/* The three routes in, spelled out on the empty state */}
+      {/* Animated Prompts Heading */}
+      <div className="pt-1">
+        <TypewriterHeading />
+      </div>
+
+      {/* Input options */}
       {showInputHints && (
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex min-h-[2.25rem] items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-soft px-3 py-1.5 text-[13px] font-medium text-brand">
-            <span aria-hidden="true">⌨</span> Type or paste it
+            <span>Type or paste text</span>
           </span>
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
             className="inline-flex min-h-[2.25rem] items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-2 transition-all duration-150 hover:-translate-y-0.5 hover:border-brand/40 hover:text-brand hover:shadow-e1"
           >
-            <span aria-hidden="true">📷</span> Photo of the page
+            <span>Photo of page</span>
           </button>
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
             className="inline-flex min-h-[2.25rem] items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-2 transition-all duration-150 hover:-translate-y-0.5 hover:border-brand/40 hover:text-brand hover:shadow-e1"
           >
-            <span aria-hidden="true">📄</span> PDF worksheet
+            <span>PDF worksheet</span>
           </button>
         </div>
       )}
@@ -280,7 +286,7 @@ export default function Composer({
           }}
           rows={4}
           maxLength={MAX_QUESTION_LENGTH}
-          placeholder="Type or paste your question — or drop a photo of the problem here."
+          placeholder="Type or paste your question — or drop a photo/PDF problem here."
           className="w-full resize-y bg-transparent px-4 pt-4 text-[15px] leading-relaxed outline-none placeholder:text-ink-3"
         />
 
@@ -359,9 +365,9 @@ export default function Composer({
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-ink-2 transition-colors hover:bg-sunken hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-sunken hover:text-ink"
           >
-            <span aria-hidden="true">📎</span> Attach
+            <span>Attach File</span>
           </button>
 
           {/* Mode segmented control */}

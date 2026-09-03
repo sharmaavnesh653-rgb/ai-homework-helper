@@ -157,8 +157,8 @@ export default function DiagramsWorkspace() {
       {/* Header */}
       <div className="space-y-2 border-b border-line pb-6">
         <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-soft text-brand font-semibold text-sm">
-            🧠
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-soft text-brand font-bold text-sm">
+            V
           </span>
           <h1 className="text-h2 font-bold text-ink">Diagrams & Concept Maps</h1>
         </div>
@@ -195,10 +195,10 @@ export default function DiagramsWorkspace() {
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-line">
           <span className="text-xs font-semibold text-ink-3">Format:</span>
           {[
-            { id: 'concept-map', label: '🧠 Concept Map' },
-            { id: 'labelled', label: '🏷 Labelled Diagram' },
-            { id: 'table', label: '📊 Comparison Table / Timeline' },
-            { id: 'chart', label: '📈 Quantitative Graph' },
+            { id: 'concept-map', label: 'Concept Map' },
+            { id: 'labelled', label: 'Labelled Diagram' },
+            { id: 'table', label: 'Comparison Table / Timeline' },
+            { id: 'chart', label: 'Quantitative Graph' },
           ].map((type) => (
             <button
               key={type.id}

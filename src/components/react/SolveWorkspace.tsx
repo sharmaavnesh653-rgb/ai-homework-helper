@@ -217,7 +217,7 @@ export default function SolveWorkspace() {
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-ok animate-pulse" />
           <span className="text-xs font-bold text-ink uppercase tracking-wider">
-            NoteGPT Workspace
+            Study Workspace
           </span>
           {subject && (
             <span className="rounded-md bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand">
@@ -237,7 +237,7 @@ export default function SolveWorkspace() {
             onClick={() => setFormulaModalOpen(true)}
             className="inline-flex items-center gap-1 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-semibold text-ink-2 transition-all hover:border-brand/40 hover:text-brand"
           >
-            <span>∑ Formula Sheet</span>
+            <span>Formula Sheet</span>
           </button>
 
           <button
@@ -249,7 +249,7 @@ export default function SolveWorkspace() {
                 : 'border-line bg-canvas text-ink-2 hover:border-line-strong hover:text-ink'
             }`}
           >
-            <span>{focusMode ? '🎯 Focus Active' : '🎯 Focus Mode'}</span>
+            <span>{focusMode ? 'Focus Active' : 'Focus Mode'}</span>
           </button>
         </div>
       </div>
@@ -295,7 +295,7 @@ export default function SolveWorkspace() {
       {solving && (
         <div className="max-w-3xl mx-auto space-y-4 py-8">
           <div className="flex items-center justify-center gap-2 text-sm font-semibold text-brand">
-            <span className="animate-spin text-lg">⚙</span> Generating structured solution & MindMap diagram...
+            Generating structured solution & MindMap diagram...
           </div>
           <AnswerSkeleton />
         </div>
@@ -315,7 +315,7 @@ export default function SolveWorkspace() {
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
-              📑 Solution & MindMap
+              Solution & MindMap
             </button>
             <button
               type="button"
@@ -326,7 +326,7 @@ export default function SolveWorkspace() {
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
-              <span>💬 AI Tutor Chat</span>
+              <span>AI Tutor Chat</span>
               {followUpTurns.length > 0 && (
                 <span className="rounded-full bg-ok px-1.5 py-0.2 text-[10px] text-white font-bold">
                   {followUpTurns.filter((t) => t.kind === 'question').length}
@@ -356,7 +356,7 @@ export default function SolveWorkspace() {
                           key={a.name}
                           className="rounded bg-canvas/15 px-2 py-0.5 text-xs text-canvas/85"
                         >
-                          {a.kind === 'pdf' ? '📄' : '🖼'} {a.name}
+                          {a.name}
                         </li>
                       ))}
                     </ul>
@@ -399,7 +399,7 @@ export default function SolveWorkspace() {
                 <div className="flex items-center justify-between border-b border-line bg-sunken/60 px-4 py-3.5">
                   <div className="flex items-center gap-2">
                     <span className="grid h-7 w-7 place-items-center rounded-lg bg-brand-soft text-brand font-semibold text-xs">
-                      💬
+                      Tutor
                     </span>
                     <div>
                       <h3 className="text-sm font-semibold text-ink">AI Tutor Assistant</h3>
@@ -415,7 +415,6 @@ export default function SolveWorkspace() {
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-slim bg-canvas/40">
                   {followUpTurns.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-3">
-                      <span className="text-3xl">🤖</span>
                       <p className="text-xs font-medium text-ink-2">
                         Have a question about the steps or mindmap?
                       </p>
@@ -441,7 +440,7 @@ export default function SolveWorkspace() {
                           className="animate-rise rounded-xl border border-line bg-surface p-3.5 shadow-sm space-y-1.5"
                         >
                           <div className="flex items-center gap-1.5 text-[11px] font-bold text-brand">
-                            <span>🤖 Stepwise Tutor</span>
+                            <span>Stepwise Tutor</span>
                           </div>
                           {turn.text ? (
                             <p className="text-xs leading-relaxed whitespace-pre-wrap text-ink">

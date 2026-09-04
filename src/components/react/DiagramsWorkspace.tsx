@@ -2,6 +2,10 @@ import { useState } from 'react';
 import VisualBlock from './VisualBlock';
 import type { Visual } from '../../lib/types';
 import { saveNote } from '../../lib/storage';
+import { Button } from '../ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
 
 const SAMPLE_DIAGRAMS: Record<string, Visual> = {
   photosynthesis: {
@@ -157,9 +161,9 @@ export default function DiagramsWorkspace() {
       {/* Header */}
       <div className="space-y-2 border-b border-line pb-6">
         <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-soft text-brand font-bold text-sm">
-            V
-          </span>
+          <Badge variant="secondary" className="px-2.5 py-1 text-xs">
+            Visual Learning
+          </Badge>
           <h1 className="text-h2 font-bold text-ink">Diagrams & Concept Maps</h1>
         </div>
         <p className="text-sm text-ink-2 max-w-2xl">
@@ -167,28 +171,29 @@ export default function DiagramsWorkspace() {
         </p>
       </div>
 
-      {/* Generator Form */}
-      <div className="rounded-xl border border-line bg-surface p-5 shadow-e1 space-y-4">
+      {/* Generator Form Card */}
+      <Card className="p-5 shadow-e1 space-y-4">
         <label htmlFor="topic-input" className="block text-xs font-bold uppercase tracking-wider text-ink-3">
           Topic or Question to Visualize
         </label>
         <div className="flex flex-col sm:flex-row gap-3">
-          <input
+          <Input
             id="topic-input"
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g. Photosynthesis, Pythagorean Theorem, French Revolution, Mitosis..."
-            className="flex-1 rounded-lg border border-line bg-canvas px-4 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring"
+            className="flex-1 h-10 text-sm"
           />
-          <button
+          <Button
             type="button"
             onClick={handleGenerate}
             disabled={!topic.trim() || loading}
-            className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-e2 transition-all hover:bg-brand-hover active:translate-y-px disabled:opacity-50 shrink-0"
+            size="lg"
+            className="shrink-0"
           >
             {loading ? 'Generating...' : 'Generate Visual'}
-          </button>
+          </Button>
         </div>
 
         {/* Diagram Type Pills */}
@@ -200,21 +205,18 @@ export default function DiagramsWorkspace() {
             { id: 'table', label: 'Comparison Table / Timeline' },
             { id: 'chart', label: 'Quantitative Graph' },
           ].map((type) => (
-            <button
+            <Button
               key={type.id}
               type="button"
+              variant={diagramType === type.id ? 'secondary' : 'outline'}
+              size="sm"
               onClick={() => setDiagramType(type.id as any)}
-              className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
-                diagramType === type.id
-                  ? 'border-brand bg-brand-soft text-brand shadow-sm'
-                  : 'border-line bg-canvas text-ink-2 hover:border-line-strong hover:text-ink'
-              }`}
             >
               {type.label}
-            </button>
+            </Button>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Preset Starters */}
       <div className="space-y-2">
@@ -226,42 +228,45 @@ export default function DiagramsWorkspace() {
             { label: 'Stages of Mitosis', key: 'cell_mitosis' },
             { label: 'French Revolution Timeline', key: 'history_timeline' },
           ].map((p) => (
-            <button
+            <Button
               key={p.key}
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => {
                 setCurrentVisual(SAMPLE_DIAGRAMS[p.key]);
                 setTopic(p.label);
               }}
-              className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-xs font-medium text-ink-2 hover:border-brand/40 hover:bg-brand-soft hover:text-brand transition-all"
+              className="rounded-full text-xs font-medium"
             >
               {p.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
-      {/* Visual Block Stage */}
-      <div className="rounded-xl border border-line bg-surface p-6 shadow-e2 space-y-4">
-        <div className="flex items-center justify-between border-b border-line pb-4">
+      {/* Visual Block Stage Card */}
+      <Card className="p-6 shadow-e2 space-y-4">
+        <CardHeader className="p-0 pb-4 border-b border-line flex-row items-center justify-between space-y-0">
           <div>
-            <h3 className="text-base font-bold text-ink">{currentVisual.caption ?? 'Visual Representation'}</h3>
-            <span className="text-xs text-ink-3 uppercase font-mono">{currentVisual.kind} format</span>
+            <CardTitle>{currentVisual.caption ?? 'Visual Representation'}</CardTitle>
+            <CardDescription className="uppercase font-mono mt-1">{currentVisual.kind} format</CardDescription>
           </div>
 
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleSaveDiagram}
-            className="rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand hover:text-brand transition-colors"
           >
             {savedLabel ?? 'Save to Library'}
-          </button>
-        </div>
+          </Button>
+        </CardHeader>
 
-        <div className="py-2">
+        <CardContent className="p-0 py-2">
           <VisualBlock visual={currentVisual} />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

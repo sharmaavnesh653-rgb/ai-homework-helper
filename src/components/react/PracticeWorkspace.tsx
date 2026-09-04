@@ -4,6 +4,9 @@ import { EmptyState, ErrorNote, SkeletonBlock, SkeletonLine } from './States';
 import { postJson } from '../../lib/client/sse';
 import { GRADES, SUBJECTS, subjectById, type SubjectId } from '../../lib/curriculum';
 import type { PracticeSet } from '../../lib/types';
+import { Button } from '../ui/button';
+import { Card, CardTitle, CardDescription } from '../ui/card';
+import { Input } from '../ui/input';
 
 type Tab = 'flashcards' | 'quiz';
 
@@ -66,14 +69,14 @@ export default function PracticeWorkspace() {
 
   return (
     <div className="space-y-8">
-      {/* Setup */}
-      <div className="space-y-4 rounded-xl border border-line bg-surface p-5 shadow-e1 sm:p-6">
+      {/* Setup Card */}
+      <Card className="space-y-4 p-5 shadow-e1 sm:p-6">
         <div>
-          <h2 className="text-h3 text-ink">What do you want to practise?</h2>
-          <p className="mt-1 text-sm leading-relaxed text-ink-2">
+          <CardTitle className="text-h3 text-ink">What do you want to practise?</CardTitle>
+          <CardDescription className="mt-1 text-sm leading-relaxed text-ink-2">
             Flashcards to drill recall, then a quiz that explains every answer —
             including why the tempting wrong one is wrong.
-          </p>
+          </CardDescription>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -104,25 +107,26 @@ export default function PracticeWorkspace() {
             Topic
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input
+            <Input
               id="topic"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && generate()}
               placeholder="e.g. Balancing chemical equations"
-              className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-all placeholder:text-ink-3 focus:border-brand focus:ring-4 focus:ring-brand-ring"
+              className="flex-1 h-10 text-sm"
             />
-            <button
+            <Button
               type="button"
               onClick={generate}
               disabled={loading || !topic.trim()}
-              className="shrink-0 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-hover active:translate-y-px disabled:opacity-45"
+              size="lg"
+              className="shrink-0"
             >
               {loading ? 'Building…' : 'Build practice set'}
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
 
       {error && <ErrorNote message={error} onRetry={generate} />}
 
@@ -286,14 +290,15 @@ export default function PracticeWorkspace() {
               })}
 
               {!submitted ? (
-                <button
+                <Button
                   type="button"
                   onClick={() => setSubmitted(true)}
                   disabled={Object.keys(picked).length === 0}
-                  className="w-full rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-brand-hover active:translate-y-px disabled:opacity-45 sm:w-auto"
+                  size="lg"
+                  className="w-full sm:w-auto"
                 >
                   Check my answers
-                </button>
+                </Button>
               ) : (
                 <div className="animate-rise flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-[15px] text-ink">
@@ -306,16 +311,17 @@ export default function PracticeWorkspace() {
                       ? 'Every one right — try a harder topic.'
                       : 'Read the explanations for the ones you missed.'}
                   </p>
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => {
                       setPicked({});
                       setSubmitted(false);
                     }}
-                    className="shrink-0 rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+                    className="shrink-0"
                   >
                     Try again
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

@@ -12,6 +12,10 @@ import {
   type SubjectId,
 } from '../../lib/curriculum';
 import type { StudyNotes } from '../../lib/types';
+import { Button } from '../ui/button';
+import { Card, CardTitle, CardDescription } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
 
 interface ChatMsg {
   id: string;
@@ -185,12 +189,12 @@ export default function NotesWorkspace() {
   return (
     <div className="grid gap-8 lg:grid-cols-[320px_1fr] lg:items-start">
       {/* Selection panel */}
-      <aside className="space-y-4 rounded-xl border border-line bg-surface p-5 shadow-e1 lg:sticky lg:top-24">
+      <Card className="space-y-4 p-5 shadow-e1 lg:sticky lg:top-24">
         <div>
-          <h2 className="text-h3 text-ink">Pick your chapter</h2>
-          <p className="mt-1 text-sm leading-relaxed text-ink-2">
+          <CardTitle className="text-h3 text-ink">Pick your chapter</CardTitle>
+          <CardDescription className="mt-1 text-sm leading-relaxed text-ink-2">
             Notes and the chat that follows stay anchored to this exact chapter.
-          </p>
+          </CardDescription>
         </div>
 
         <div className="space-y-3.5">
@@ -226,25 +230,27 @@ export default function NotesWorkspace() {
           />
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={generate}
           disabled={!ready || loading}
-          className="w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-brand-hover active:translate-y-px disabled:cursor-not-allowed disabled:opacity-45"
+          size="lg"
+          className="w-full"
         >
           {loading ? 'Writing notes…' : notes ? 'Regenerate notes' : 'Generate notes'}
-        </button>
+        </Button>
 
         {notes && (
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={store}
-            className="w-full rounded-lg border border-line px-4 py-2.5 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+            className="w-full"
           >
             {saved ? 'Saved to your notes ✓' : 'Save to my notes'}
-          </button>
+          </Button>
         )}
-      </aside>
+      </Card>
 
       {/* Notes + chat */}
       <div className="min-w-0 space-y-8">

@@ -1,12 +1,6 @@
 @import "@fontsource-variable/inter";
 @import "katex/dist/katex.min.css";
-
-/*
-  Scope class detection to src/ only. Without this, Tailwind also scans
-  .claude/skills/ (which ships the Tailwind docs) and emits a utility for every
-  class named in them — ~340KB of dead CSS.
-*/
-@import "tailwindcss" source("../");
+@import "tailwindcss";
 
 /* Class-based dark mode so the toggle can drive it explicitly. */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -16,6 +10,27 @@
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* Shadcn color mappings */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   /* Tightened display sizes — large type needs less letter-spacing */
   --text-display: 3.5rem;
@@ -63,7 +78,6 @@
   --color-brand-ring: #0f7a6333;
 
   /* ---------------- Accent: honey highlighter ---------------- */
-  --color-accent: #e8a53a;
   --color-accent-soft: #fdf3e0;
 
   /* ---------------- Semantic ---------------- */
@@ -94,6 +108,27 @@
   Plain custom properties are always emitted, and these need no utilities.
 */
 :root {
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #0f7a63;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #0f7a63;
+  --radius: 0.5rem;
+
   /* Subject hues (categorical, muted) */
   --color-subj-math: #14776b;
   --color-subj-physics: #2f6b96;
@@ -104,12 +139,6 @@
   --color-subj-geo: #2c7a7a;
   --color-subj-cs: #4a5568;
 
-  /*
-    Chart series palette. Fixed order, never cycled. Warm/cool alternating so
-    adjacent pairs separate. Validated against the #ffffff card surface for
-    lightness band, chroma floor, CVD separation, normal-vision floor and
-    contrast.
-  */
   --color-series-1: #0d8f72;
   --color-series-2: #c2610a;
   --color-series-3: #2563c9;
@@ -118,6 +147,26 @@
 
 /* Dark palette: re-point the same tokens so every utility follows. */
 .dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --primary: #10b981;
+  --primary-foreground: #09090b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #10b981;
+
   --color-canvas: #14171c;
   --color-surface: #1b1f26;
   --color-raised: #21262e;

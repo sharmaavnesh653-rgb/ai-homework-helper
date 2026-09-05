@@ -1,8 +1,39 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
 import Formula from './Formula';
-import VisualBlock from './VisualBlock';
 import ThemeToggle from './ThemeToggle';
-import type { Visual } from '../../lib/types';
+import TypewriterHeading from './TypewriterHeading';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Sparkles,
+  BookOpen,
+  FileText,
+  HelpCircle,
+  Share2,
+  Download,
+  Copy,
+  Check,
+  Search,
+  Zap,
+  Layers,
+  ListOrdered,
+  ChevronRight,
+  ChevronLeft,
+  Volume2,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  MessageSquare,
+  CheckCircle2,
+  XCircle,
+  Sliders
+} from 'lucide-react';
 
 interface Timestamp {
   time: string;
@@ -12,56 +43,132 @@ interface Timestamp {
 }
 
 const SAMPLE_TIMESTAMPS: Timestamp[] = [
-  { time: '00:45', seconds: 45, label: 'Problem Introduction & Setup', snippet: 'Initial parameters and vector decomposition' },
-  { time: '02:15', seconds: 135, label: 'Kinematic Equations Choice', snippet: 'Selecting v_y = v_0 * sin(theta) for vertical height' },
-  { time: '05:30', seconds: 330, label: 'Step-by-Step Derivation', snippet: 'Substituting values into h_max = (v_0^2 * sin^2(theta)) / (2g)' },
-  { time: '08:10', seconds: 490, label: 'Self-Check & Summary', snippet: 'Verifying dimensional consistency and physical limits' },
+  { time: '00:45', seconds: 45, label: 'Vector Decomposition', snippet: 'Decoupling horizontal v_x and vertical v_y velocities' },
+  { time: '02:15', seconds: 135, label: 'Kinematic Formulas', snippet: 'Choosing v_y = v_0 * sin(theta) for maximum height' },
+  { time: '05:30', seconds: 330, label: 'Step-by-Step Derivation', snippet: 'Substituting parameters into h_max formula' },
+  { time: '08:10', seconds: 490, label: 'Sanity Check & Limits', snippet: 'Verifying dimensional consistency and zero angle limit' },
 ];
 
-const SAMPLE_MINDMAP: Visual = {
-  kind: 'concept-map',
-  caption: 'Projectile Motion Concept Map',
-  nodes: [
-    { id: '1', label: 'Kinematics' },
-    { id: '2', label: 'Horizontal Motion (v_x = const)' },
-    { id: '3', label: 'Vertical Motion (a_y = -g)' },
-    { id: '4', label: 'Launch Angle (θ)' },
-    { id: '5', label: 'Max Height (h_max)' },
-    { id: '6', label: 'Flight Time (t_total)' },
-  ],
-  links: [
-    { from: '1', to: '2', label: 'No acceleration' },
-    { from: '1', to: '3', label: 'Gravity acts' },
-    { from: '3', to: '4', label: 'Resolves v_y' },
-    { from: '3', to: '5', label: 'Peak condition v_y=0' },
-    { from: '3', to: '6', label: 'Total air time' },
-  ],
-};
+const FLASHCARDS = [
+  {
+    id: 1,
+    question: 'Why does horizontal velocity remain constant in ideal projectile motion?',
+    answer: 'Because gravity acts purely vertically (downward), making horizontal acceleration a_x = 0 m/s^2 when air resistance is neglected.',
+    topic: 'Kinematics'
+  },
+  {
+    id: 2,
+    question: 'What is the vertical velocity at the maximum apex height?',
+    answer: 'At peak height, vertical velocity v_y = 0 m/s momentarily before changing direction and descending.',
+    topic: 'Trajectory Peak'
+  },
+  {
+    id: 3,
+    question: 'What angle maximizes horizontal range on flat ground?',
+    answer: 'A launch angle of 45° provides the optimal balance between horizontal velocity and air hang-time.',
+    topic: 'Range Optimization'
+  },
+];
+
+const QUIZ_QUESTIONS = [
+  {
+    id: 1,
+    question: 'A ball is thrown with initial speed 20 m/s at 30° above horizontal. What is its initial vertical velocity component?',
+    options: ['10 m/s', '17.3 m/s', '20 m/s', '5 m/s'],
+    correct: 0,
+    explanation: 'v_y = v_0 * sin(30°) = 20 * 0.5 = 10 m/s.'
+  },
+  {
+    id: 2,
+    question: 'At the highest point of a projectile trajectory, which vector is zero?',
+    options: ['Horizontal acceleration', 'Vertical velocity', 'Total displacement', 'Gravitational force'],
+    correct: 1,
+    explanation: 'At the apex, vertical velocity drops to zero before changing direction.'
+  }
+];
+
+const FORMULAS = [
+  { topic: 'Kinematics', tex: 'v_y = v_0 \\sin\\theta - gt', label: 'Vertical Velocity' },
+  { topic: 'Kinematics', tex: 'h_{\\text{max}} = \\frac{v_0^2 \\sin^2\\theta}{2g}', label: 'Maximum Peak Height' },
+  { topic: 'Kinematics', tex: 'R = \\frac{v_0^2 \\sin(2\\theta)}{g}', label: 'Horizontal Range' },
+  { topic: 'Dynamics', tex: 'F_{\\text{net}} = m \\cdot a', label: 'Newton\'s Second Law' },
+];
 
 export default function NoteGPTWorkspace() {
   // Navigation & Workspace states
-  const [activeCenterTab, setActiveCenterTab] = useState<'summarizer' | 'pdf' | 'flashcards' | 'mindmap' | 'solver'>('summarizer');
+  const [activeTab, setActiveTab] = useState<'summary' | 'flashcards' | 'diagram' | 'quiz' | 'formulas' | 'notes' | 'chat'>('summary');
   const [leftTab, setLeftTab] = useState<'media' | 'transcript' | 'file'>('media');
-  const [rightTab, setRightTab] = useState<'summary' | 'takeaways' | 'mindmap' | 'notes' | 'chat'>('summary');
-  const [mobileTab, setMobileTab] = useState<'source' | 'workspace'>('workspace');
 
-  // Interactive states
-  const [videoTimestamp, setVideoTimestamp] = useState(45);
+  // Audio / Video player interactive states
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(45);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const duration = 540; // 9 minutes
+
+  // Flashcards states
+  const [cardIndex, setCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [masteredCards, setMasteredCards] = useState<number[]>([]);
+
+  // Diagram states
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [selectedNode, setSelectedNode] = useState<string | null>('1');
+
+  // Quiz states
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [quizScore, setQuizScore] = useState(0);
+
+  // Formulas search state
+  const [formulaSearch, setFormulaSearch] = useState('');
+  const [copiedFormula, setCopiedFormula] = useState<string | null>(null);
+
+  // Markdown Notes states
   const [customNotes, setCustomNotes] = useState(
-    '# Class Notes - Physics Kinematics\n- Remember: Horizontal velocity component v_x remains constant when air resistance is neglected.\n- Vertical velocity at peak height is exactly 0 m/s.\n- Key Formula: h_max = (v_y^2) / (2g)'
+    '# Physics Kinematics - Class Summary\n\n## Core Principles\n- **Horizontal Motion**: Constant speed ($v_x = v_0 \\cos\\theta$), acceleration $a_x = 0$.\n- **Vertical Motion**: Free-fall acceleration ($a_y = -g = -9.81 \\text{ m/s}^2$).\n\n## Peak Condition\nAt peak height ($h_{\\text{max}}$), vertical velocity $v_y = 0 \\text{ m/s}$.'
   );
+  const [noteSavedToast, setNoteSavedToast] = useState(false);
+
+  // Chat Q&A states
   const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'ai'; text: string; time: string }>>([
-    { role: 'ai', text: 'Hello! I have summarized this video on Projectile Motion & Kinematics. What would you like to explore or check?', time: '10:42 AM' },
+    { role: 'ai', text: 'Hello! I have generated full step-by-step summary, flashcards, and concept maps for this physics lesson. What topic would you like to test or review?', time: '10:45 AM' },
   ]);
   const [chatInput, setChatInput] = useState('');
-  const [exportNotice, setExportNotice] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
-  // Handlers
+  // Auto-timer for simulated audio playback
+  useEffect(() => {
+    let timer: any;
+    if (isPlaying) {
+      timer = setInterval(() => {
+        setCurrentTime((prev) => (prev >= duration ? 0 : prev + 1));
+      }, 1000 / playbackSpeed);
+    }
+    return () => clearInterval(timer);
+  }, [isPlaying, playbackSpeed]);
+
   const handleTimestampClick = (seconds: number) => {
-    setVideoTimestamp(seconds);
-    // Switch to media tab if on source view
+    setCurrentTime(seconds);
     setLeftTab('media');
+    setIsPlaying(true);
+  };
+
+  const handleToggleMastered = (id: number) => {
+    if (masteredCards.includes(id)) {
+      setMasteredCards(masteredCards.filter((c) => c !== id));
+    } else {
+      setMasteredCards([...masteredCards, id]);
+    }
+  };
+
+  const handleCopyFormula = (tex: string) => {
+    navigator.clipboard.writeText(tex);
+    setCopiedFormula(tex);
+    setTimeout(() => setCopiedFormula(null), 2000);
+  };
+
+  const handleSaveNotes = () => {
+    setNoteSavedToast(true);
+    setTimeout(() => setNoteSavedToast(false), 2000);
   };
 
   const handleSendChat = (e: React.FormEvent) => {
@@ -69,194 +176,131 @@ export default function NoteGPTWorkspace() {
     if (!chatInput.trim()) return;
 
     const userMsg = chatInput.trim();
-    setChatMessages((prev) => [
-      ...prev,
-      { role: 'user', text: userMsg, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
-    ]);
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setChatMessages((prev) => [...prev, { role: 'user', text: userMsg, time: timeStr }]);
     setChatInput('');
 
-    // Simulated AI Response
     setTimeout(() => {
       setChatMessages((prev) => [
         ...prev,
         {
           role: 'ai',
-          text: `Great question about "${userMsg.slice(0, 30)}..."! In projectile motion, we decompose the initial velocity vector v into v_x = v*cos(θ) and v_y = v*sin(θ). Notice how gravity only affects the vertical component.`,
+          text: `Regarding "${userMsg}": In two-dimensional kinematics, remember that orthogonal vectors act independently. You can analyze horizontal distance x = v_x * t completely separate from vertical displacement y = v_0y*t - 0.5*g*t^2.`,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
     }, 600);
   };
 
-  const handleExport = (format: string) => {
-    setExportNotice(`Exported notes as ${format.toUpperCase()} successfully!`);
-    setTimeout(() => setExportNotice(null), 2500);
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(customNotes);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
-  };
+  const filteredFormulas = FORMULAS.filter((f) =>
+    f.label.toLowerCase().includes(formulaSearch.toLowerCase()) ||
+    f.topic.toLowerCase().includes(formulaSearch.toLowerCase()) ||
+    f.tex.toLowerCase().includes(formulaSearch.toLowerCase())
+  );
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-ink font-sans selection:bg-brand/20">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30">
       
-      {/* ========================================================================= */}
-      {/* 2. TOP HEADER (Navbar - Height: ~64px)                                    */}
-      {/* ========================================================================= */}
-      <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-line bg-surface/90 px-4 sm:px-6 backdrop-blur-md z-30">
-        
-        {/* Left: Brand + Project Title Dropdown */}
+      {/* TOP HEADER / NAVBAR */}
+      <header className="flex h-14 w-full shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/80 px-4 sm:px-6 backdrop-blur-md z-30">
         <div className="flex items-center gap-3">
           <a href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand font-bold text-white shadow-e2">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-600 font-extrabold text-white shadow-sm">
               S
             </span>
-            <span className="text-base font-extrabold tracking-tight text-ink hidden sm:inline-block">
-              Stepwise <span className="text-xs font-normal text-ink-3">Studio</span>
+            <span className="text-sm font-extrabold tracking-tight text-zinc-100 hidden sm:inline-block">
+              Stepwise <span className="text-xs font-normal text-zinc-400">Studio</span>
             </span>
           </a>
 
-          <div className="h-4 w-px bg-line hidden sm:block" />
+          <div className="h-4 w-px bg-zinc-800 hidden sm:block" />
 
-          {/* Project Title Selector */}
-          <div className="flex items-center gap-1.5 rounded-lg border border-line bg-canvas/80 px-2.5 py-1.5 text-xs font-medium text-ink transition-colors hover:border-brand/40">
-            <span className="h-2 w-2 rounded-full bg-ok" />
-            <span className="max-w-[140px] truncate sm:max-w-[200px]">Physics 101: Kinematics</span>
-            <span className="text-ink-3">▼</span>
+          {/* Project Title Badge */}
+          <div className="flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-xs font-medium text-zinc-200">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="max-w-[160px] truncate sm:max-w-[240px]">Physics 101: Kinematics & Vectors</span>
           </div>
         </div>
 
-        {/* Center: Quick Tab Switchers (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-1 rounded-xl border border-line bg-sunken/60 p-1">
+        {/* Center: Action Switchers */}
+        <div className="hidden md:flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
           {[
-            { id: 'summarizer', label: 'AI Summarizer' },
-            { id: 'pdf', label: 'PDF Reader' },
-            { id: 'flashcards', label: 'Flashcards' },
-            { id: 'mindmap', label: 'Mindmap' },
-            { id: 'solver', label: 'Homework Solver' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveCenterTab(tab.id as any)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                activeCenterTab === tab.id
-                  ? 'bg-surface text-brand shadow-e1'
-                  : 'text-ink-2 hover:text-ink hover:bg-surface/50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+            { id: 'summary', label: 'Summary', icon: BookOpen },
+            { id: 'flashcards', label: 'Flashcards', icon: Layers },
+            { id: 'diagram', label: 'Diagram', icon: Sliders },
+            { id: 'quiz', label: 'Quiz', icon: HelpCircle },
+            { id: 'notes', label: 'Editor', icon: FileText },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id as any)}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold transition-all ${
+                  activeTab === item.id
+                    ? 'bg-zinc-800 text-emerald-400 shadow-sm'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Right: Actions, Dark Mode, Profile */}
+        {/* Right: Export & Theme */}
         <div className="flex items-center gap-2">
-          {/* Export Dropdown Button */}
-          <div className="relative group">
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition-all hover:border-brand/40 hover:shadow-e1"
-            >
-              <span>Export</span>
-              <span className="text-ink-3">▼</span>
-            </button>
-            <div className="absolute right-0 top-full mt-1 hidden group-hover:block w-36 rounded-xl border border-line bg-surface p-1 shadow-e3 z-50">
-              <button
-                type="button"
-                onClick={() => handleExport('pdf')}
-                className="w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium text-ink hover:bg-sunken"
-              >
-                Export as PDF
-              </button>
-              <button
-                type="button"
-                onClick={() => handleExport('markdown')}
-                className="w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium text-ink hover:bg-sunken"
-              >
-                Export Markdown
-              </button>
-              <button
-                type="button"
-                onClick={() => handleExport('txt')}
-                className="w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium text-ink hover:bg-sunken"
-              >
-                Plain Text (.txt)
-              </button>
-            </div>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSaveNotes}
+            className="h-8 gap-1.5 border-zinc-800 bg-zinc-900 text-xs font-semibold text-zinc-200 hover:bg-zinc-800"
+          >
+            <Download className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Export Notes</span>
+          </Button>
 
           <ThemeToggle />
-
-          {/* User Profile Avatar */}
-          <div className="flex items-center gap-2 pl-1">
-            <div className="grid h-8 w-8 place-items-center rounded-full bg-brand-soft text-brand font-bold text-xs border border-brand/30">
-              ST
-            </div>
-          </div>
         </div>
       </header>
 
-      {/* Export notification Toast */}
-      {exportNotice && (
-        <div className="absolute top-20 right-6 z-50 animate-fade rounded-xl bg-ink px-4 py-2.5 text-xs font-semibold text-canvas shadow-e4">
-          {exportNotice}
+      {/* Toast Notification */}
+      {noteSavedToast && (
+        <div className="absolute top-16 right-6 z-50 animate-bounce rounded-lg border border-emerald-500/30 bg-emerald-950 px-4 py-2 text-xs font-semibold text-emerald-200 shadow-lg">
+          ✓ Notes saved to local workspace
         </div>
       )}
 
-      {/* Mobile Top View Switcher Bar */}
-      <div className="flex border-b border-line bg-surface px-3 py-2 lg:hidden">
-        <button
-          type="button"
-          onClick={() => setMobileTab('source')}
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-            mobileTab === 'source' ? 'bg-brand text-white shadow-e1' : 'text-ink-2 hover:text-ink'
-          }`}
-        >
-          Source & Video View
-        </button>
-        <button
-          type="button"
-          onClick={() => setMobileTab('workspace')}
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
-            mobileTab === 'workspace' ? 'bg-brand text-white shadow-e1' : 'text-ink-2 hover:text-ink'
-          }`}
-        >
-          AI Notes & Chat
-        </button>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 1. MAIN SPLIT-SCREEN DASHBOARD BODY (Fixed 100vh)                         */}
-      {/* ========================================================================= */}
+      {/* MAIN SPLIT-SCREEN WORKSPACE */}
       <main className="flex flex-1 overflow-hidden">
         
-        {/* ----------------------------------------------------------------------- */}
-        {/* 3. LEFT PANEL: SOURCE WORKSPACE (45% Width Desktop)                     */}
-        {/* ----------------------------------------------------------------------- */}
-        <section
-          className={`flex flex-col border-r border-line bg-surface/50 w-full lg:w-[45%] xl:w-[42%] shrink-0 overflow-hidden ${
-            mobileTab === 'workspace' ? 'hidden lg:flex' : 'flex'
-          }`}
-        >
-          {/* Header Tab Bar Inside Left Panel */}
-          <div className="flex items-center justify-between border-b border-line bg-surface px-4 py-2">
-            <div className="flex gap-1 rounded-lg bg-sunken p-0.5">
+        {/* LEFT PANEL: MEDIA & SOURCE WORKSPACE (42% Width) */}
+        <section className="flex flex-col border-r border-zinc-800 bg-zinc-950/60 w-full lg:w-[42%] shrink-0 overflow-hidden">
+          
+          {/* Header Tab Bar */}
+          <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/60 px-4 py-2">
+            <div className="flex gap-1 rounded-md bg-zinc-950 p-1 border border-zinc-800/60">
               {[
-                { id: 'media', label: 'Media Player' },
+                { id: 'media', label: 'Video Player' },
                 { id: 'transcript', label: 'Transcript' },
-                { id: 'file', label: 'Uploaded File' },
+                { id: 'file', label: 'Attached Notes' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setLeftTab(tab.id as any)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                  className={`rounded px-2.5 py-1 text-xs font-medium transition-all ${
                     leftTab === tab.id
-                      ? 'bg-surface text-ink shadow-e1'
-                      : 'text-ink-3 hover:text-ink-2'
+                      ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm'
+                      : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
                   {tab.label}
@@ -264,18 +308,18 @@ export default function NoteGPTWorkspace() {
               ))}
             </div>
 
-            <span className="text-[11px] font-mono text-ink-3">HD 1080p</span>
+            <span className="text-[11px] font-mono text-zinc-400">1080p HD</span>
           </div>
 
-          {/* Left Panel Main View Area */}
+          {/* Left Main Content */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-slim">
             
             {leftTab === 'media' && (
               <div className="space-y-4">
-                {/* YouTube Video Player Embed Wrapper */}
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-line bg-ink shadow-e3">
+                {/* YouTube Video Player Embed */}
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-zinc-800 bg-black shadow-lg">
                   <iframe
-                    src={`https://www.youtube-nocookie.com/embed/gT8E6Mmsv4U?start=${videoTimestamp}&autoplay=0`}
+                    src={`https://www.youtube-nocookie.com/embed/gT8E6Mmsv4U?start=${currentTime}&autoplay=0`}
                     title="Physics Kinematics Lecture"
                     className="h-full w-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -283,35 +327,86 @@ export default function NoteGPTWorkspace() {
                   />
                 </div>
 
-                {/* Video Info Badge */}
-                <div className="rounded-xl border border-line bg-surface p-3.5 space-y-1.5 shadow-sm">
-                  <h3 className="text-sm font-bold text-ink">MIT 8.01 Physics - Lecture 2: Kinematics & Vectors</h3>
-                  <p className="text-xs text-ink-2 leading-relaxed">
-                    Instructor: Prof. Walter Lewin · Duration: 45:20 · Source: YouTube
-                  </p>
-                </div>
+                {/* Custom Interactive Audio Sync Controller */}
+                <Card className="border-zinc-800 bg-zinc-900/80 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="icon"
+                        variant="default"
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="h-9 w-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white"
+                      >
+                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+                      </Button>
+
+                      <div>
+                        <p className="text-xs font-semibold text-zinc-100">MIT 8.01 Kinematics Audio</p>
+                        <p className="text-[11px] font-mono text-zinc-400">
+                          {formatTime(currentTime)} / {formatTime(duration)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Playback speed toggle */}
+                    <div className="flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-950 p-0.5">
+                      {[1, 1.25, 1.5, 2].map((spd) => (
+                        <button
+                          key={spd}
+                          type="button"
+                          onClick={() => setPlaybackSpeed(spd)}
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-mono font-semibold transition-all ${
+                            playbackSpeed === spd
+                              ? 'bg-emerald-600 text-white'
+                              : 'text-zinc-400 hover:text-zinc-200'
+                          }`}
+                        >
+                          {spd}x
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Waveform / Progress bar */}
+                  <div className="space-y-1">
+                    <input
+                      type="range"
+                      min={0}
+                      max={duration}
+                      value={currentTime}
+                      onChange={(e) => setCurrentTime(Number(e.target.value))}
+                      className="w-full h-1.5 accent-emerald-500 bg-zinc-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+                </Card>
               </div>
             )}
 
             {leftTab === 'transcript' && (
-              <div className="space-y-3 rounded-xl border border-line bg-surface p-4">
-                <div className="flex items-center justify-between text-xs font-semibold text-ink-3 border-b border-line pb-2">
-                  <span>Timestamped Transcript</span>
-                  <span>Search</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-zinc-400 border-b border-zinc-800 pb-2 px-1">
+                  <span>Interactive Timestamps</span>
+                  <span>Click line to jump</span>
                 </div>
-                <div className="space-y-3.5 text-xs leading-relaxed">
+                <div className="space-y-2">
                   {SAMPLE_TIMESTAMPS.map((t) => (
                     <div
                       key={t.time}
                       onClick={() => handleTimestampClick(t.seconds)}
-                      className="group flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-sunken cursor-pointer"
+                      className={`group flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-all ${
+                        currentTime >= t.seconds && currentTime < t.seconds + 90
+                          ? 'border-emerald-500/50 bg-emerald-950/20 text-emerald-200'
+                          : 'border-zinc-800/60 bg-zinc-900/40 hover:border-zinc-700 hover:bg-zinc-900'
+                      }`}
                     >
-                      <span className="shrink-0 rounded bg-brand-soft px-2 py-0.5 font-mono text-brand font-semibold group-hover:bg-brand group-hover:text-white transition-colors">
+                      <Badge variant="outline" className="font-mono text-emerald-400 border-emerald-500/30 shrink-0">
                         {t.time}
-                      </span>
+                      </Badge>
                       <div>
-                        <h5 className="font-semibold text-ink">{t.label}</h5>
-                        <p className="text-ink-2 mt-0.5">{t.snippet}</p>
+                        <h5 className="text-xs font-bold text-zinc-200 group-hover:text-emerald-400 transition-colors">
+                          {t.label}
+                        </h5>
+                        <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">{t.snippet}</p>
                       </div>
                     </div>
                   ))}
@@ -320,28 +415,22 @@ export default function NoteGPTWorkspace() {
             )}
 
             {leftTab === 'file' && (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-line bg-surface/80 p-8 text-center space-y-3">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand-soft text-brand font-bold text-lg">
-                  PDF
+              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/40 p-8 text-center space-y-3">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-950/60 text-emerald-400 font-bold border border-emerald-500/20">
+                  <FileText className="h-6 w-6" />
                 </div>
-                <h4 className="text-sm font-bold text-ink">Drop your lecture notes or PDF here</h4>
-                <p className="text-xs text-ink-3 max-w-xs leading-relaxed">
-                  Supports PDF, DOCX, and image formats up to 25MB for AI analysis.
+                <h4 className="text-xs font-bold text-zinc-200">Lecture Slides / Textbook PDF Attached</h4>
+                <p className="text-[11px] text-zinc-400 max-w-xs leading-relaxed">
+                  Physics_Chapter_2_Kinematics.pdf (4.2 MB) · Analyzed by Stepwise Engine.
                 </p>
-                <button
-                  type="button"
-                  className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white shadow-e1 hover:bg-brand-hover transition-colors"
-                >
-                  Choose File
-                </button>
               </div>
             )}
           </div>
 
-          {/* Left Panel Bottom Controls: Interactive Timestamps */}
-          <div className="border-t border-line bg-surface p-3 space-y-2 shrink-0">
-            <span className="text-[11px] font-bold text-ink-3 uppercase tracking-wider block">
-              Jump to Timestamp
+          {/* Left Bottom Quick Jump Bar */}
+          <div className="border-t border-zinc-800 bg-zinc-900/80 p-3 space-y-1.5 shrink-0">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+              Key Video Timestamps
             </span>
             <div className="flex flex-wrap gap-1.5">
               {SAMPLE_TIMESTAMPS.map((t) => (
@@ -349,204 +438,440 @@ export default function NoteGPTWorkspace() {
                   key={t.time}
                   type="button"
                   onClick={() => handleTimestampClick(t.seconds)}
-                  className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all ${
-                    videoTimestamp === t.seconds
-                      ? 'border-brand bg-brand text-white shadow-e1'
-                      : 'border-line bg-canvas text-ink-2 hover:border-brand/40 hover:text-brand'
+                  className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[11px] font-mono font-medium transition-all ${
+                    currentTime === t.seconds
+                      ? 'border-emerald-500 bg-emerald-900/40 text-emerald-300'
+                      : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
                   }`}
                 >
-                  <span className="font-mono">{t.time}</span>
-                  <span className="max-w-[90px] truncate">{t.label}</span>
+                  <span>▶ {t.time}</span>
+                  <span className="max-w-[80px] truncate">{t.label}</span>
                 </button>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ----------------------------------------------------------------------- */}
-        {/* 4. RIGHT PANEL: AI OUTPUT & WORKSPACE (The Core NoteGPT UI)             */}
-        {/* ----------------------------------------------------------------------- */}
-        <section
-          className={`flex flex-col flex-1 bg-canvas overflow-hidden ${
-            mobileTab === 'source' ? 'hidden lg:flex' : 'flex'
-          }`}
-        >
-          {/* Top Internal Header: Action Tabs + Glassmorphic Toolbar */}
-          <div className="flex flex-wrap items-center justify-between border-b border-line bg-surface px-4 py-2 gap-2 shrink-0 z-10">
-            
-            {/* Right Panel Main Tabs */}
+        {/* RIGHT PANEL: AI TOOLS & WORKSPACE (58% Width) */}
+        <section className="flex flex-col flex-1 bg-zinc-950 overflow-hidden">
+          
+          {/* Main Action Tabs Bar */}
+          <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-4 py-2 gap-2 shrink-0 z-10">
             <div className="flex gap-1 overflow-x-auto scroll-slim">
               {[
-                { id: 'summary', label: 'AI Summary' },
-                { id: 'takeaways', label: 'Key Takeaways' },
-                { id: 'mindmap', label: 'Mindmap Diagram' },
-                { id: 'notes', label: 'Interactive Notes' },
-                { id: 'chat', label: 'AI Q&A Chat' },
+                { id: 'summary', label: 'Summary' },
+                { id: 'flashcards', label: 'Flashcards' },
+                { id: 'diagram', label: 'Concept Diagram' },
+                { id: 'quiz', label: 'Quiz' },
+                { id: 'formulas', label: 'Formulas' },
+                { id: 'notes', label: 'Notes Editor' },
+                { id: 'chat', label: 'AI Tutor Q&A' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setRightTab(tab.id as any)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
-                    rightTab === tab.id
-                      ? 'bg-brand text-white shadow-e1'
-                      : 'text-ink-2 hover:text-ink hover:bg-sunken'
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                   }`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-
-            {/* Action Toolbar */}
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-2 hover:border-line-strong hover:text-ink transition-colors"
-              >
-                {copied ? 'Copied ✓' : 'Copy'}
-              </button>
-              <button
-                type="button"
-                className="rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-2 hover:border-line-strong hover:text-ink transition-colors"
-              >
-                AI Rewrite
-              </button>
-              <button
-                type="button"
-                className="rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-2 hover:border-line-strong hover:text-ink transition-colors"
-              >
-                Polish
-              </button>
-            </div>
           </div>
 
-          {/* Main Workspace Body (Independently Scrollable inside 100vh) */}
+          {/* Right Main Body View Area */}
           <div className="flex-1 overflow-y-auto p-5 space-y-6 scroll-slim">
             
-            {/* TAB 1: AI SUMMARY */}
-            {rightTab === 'summary' && (
-              <div className="space-y-6 animate-fade">
-                {/* Executive Overview */}
-                <div className="rounded-xl border border-line bg-surface p-5 shadow-e1 space-y-2.5">
+            {/* TAB 1: SUMMARY */}
+            {activeTab === 'summary' && (
+              <div className="space-y-4 animate-fade">
+                <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4 mb-2 shadow-inner">
+                  <TypewriterHeading />
+                </div>
+                <Card className="border-zinc-800 bg-zinc-900/60 p-5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-overline text-brand uppercase font-bold">Executive Summary</span>
-                    <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-[11px] font-semibold text-brand">
-                      AI Generated · 98% Accuracy
-                    </span>
+                    <Badge className="bg-emerald-950 text-emerald-300 border-emerald-500/30">
+                      Executive Summary
+                    </Badge>
+                    <span className="text-[11px] font-mono text-zinc-400">98% Accuracy · Verified Formula</span>
                   </div>
-                  <p className="text-sm leading-relaxed text-ink font-medium">
-                    This lecture covers the fundamental principles of two-dimensional kinematics, specifically projectile motion under gravitational acceleration. It derives equation formulas for maximum height, range, and time of flight while emphasizing component separation.
+                  <p className="text-xs leading-relaxed text-zinc-200 font-medium">
+                    This lecture derives orthogonal vector kinematics for projectile motion under gravitational acceleration. It isolates horizontal uniform velocity (v_x = constant) from vertical free-fall acceleration (a_y = -g).
                   </p>
+                </Card>
+
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Derivation Steps</h4>
+
+                  <Card className="border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h5 className="text-xs font-bold text-zinc-100">1. Vector Velocity Resolution</h5>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleTimestampClick(45)}
+                        className="h-6 text-[11px] font-mono text-emerald-400 hover:text-emerald-300"
+                      >
+                        ▶ 00:45
+                      </Button>
+                    </div>
+                    <p className="text-xs leading-relaxed text-zinc-400">
+                      Initial speed $v_0$ at launch angle $\theta$ splits into component vectors:
+                    </p>
+                    <div className="rounded-md bg-zinc-950 p-2 border border-zinc-800">
+                      <Formula tex="v_x = v_0 \cos\theta, \quad v_y = v_0 \sin\theta - g t" />
+                    </div>
+                  </Card>
+
+                  <Card className="border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h5 className="text-xs font-bold text-zinc-100">2. Peak Height Derivation</h5>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleTimestampClick(330)}
+                        className="h-6 text-[11px] font-mono text-emerald-400 hover:text-emerald-300"
+                      >
+                        ▶ 05:30
+                      </Button>
+                    </div>
+                    <p className="text-xs leading-relaxed text-zinc-400">
+                      At maximum peak height, vertical velocity drops to zero ($v_y = 0$). Substituting yields:
+                    </p>
+                    <div className="rounded-md bg-zinc-950 p-2 border border-zinc-800">
+                      <Formula tex="h_{\text{max}} = \frac{v_0^2 \sin^2\theta}{2g}" />
+                    </div>
+                  </Card>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: FLASHCARDS */}
+            {activeTab === 'flashcards' && (
+              <div className="space-y-4 animate-fade">
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="border-zinc-800 text-zinc-300">
+                    Card {cardIndex + 1} of {FLASHCARDS.length}
+                  </Badge>
+
+                  <span className="text-xs text-emerald-400 font-semibold">
+                    {masteredCards.length} Mastered
+                  </span>
                 </div>
 
-                {/* Structured Breakdown Cards with Interactive Timestamps */}
-                <div className="space-y-4">
-                  <h4 className="text-xs font-bold text-ink-3 uppercase tracking-wider">Step-by-Step Breakdown</h4>
+                {/* 3D Flip Card */}
+                <div
+                  onClick={() => setIsFlipped(!isFlipped)}
+                  className="group relative min-h-[220px] w-full cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-xl transition-all duration-300 hover:border-emerald-500/40 flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between text-xs text-zinc-400">
+                    <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">
+                      {FLASHCARDS[cardIndex].topic}
+                    </Badge>
+                    <span className="text-[11px] text-zinc-400">Click to {isFlipped ? 'show question' : 'flip answer'}</span>
+                  </div>
 
-                  <div className="space-y-3">
-                    <div className="rounded-xl border border-line bg-surface p-4 shadow-sm space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h5 className="text-sm font-semibold text-ink">1. Vector Velocity Decomposition</h5>
-                        <button
-                          type="button"
-                          onClick={() => handleTimestampClick(45)}
-                          className="rounded bg-brand-soft px-2 py-0.5 text-xs font-mono font-semibold text-brand hover:bg-brand hover:text-white transition-colors"
-                        >
-                          ▶ 00:45
-                        </button>
-                      </div>
-                      <p className="text-xs leading-relaxed text-ink-2">
-                        Any 2D motion can be decoupled into orthogonal horizontal (X) and vertical (Y) axes. Since gravity acts strictly vertically, vertical acceleration is -g while horizontal acceleration is zero.
+                  <div className="my-6 text-center">
+                    {!isFlipped ? (
+                      <p className="text-sm font-bold text-zinc-100 leading-relaxed">
+                        {FLASHCARDS[cardIndex].question}
                       </p>
-                      <div className="rounded-lg bg-sunken p-2.5">
-                        <Formula tex="v_x = v_0 \cos\theta, \quad v_y = v_0 \sin\theta - g t" />
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Answer</p>
+                        <p className="text-xs text-zinc-200 leading-relaxed font-medium">
+                          {FLASHCARDS[cardIndex].answer}
+                        </p>
                       </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 text-xs text-zinc-400">
+                    <span>Active Recall</span>
+                    <span className="text-emerald-400 font-medium">Tap Card ↺</span>
+                  </div>
+                </div>
+
+                {/* Controls */}
+                <div className="flex items-center justify-between gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={cardIndex === 0}
+                    onClick={() => { setCardIndex(cardIndex - 1); setIsFlipped(false); }}
+                    className="border-zinc-800 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                  </Button>
+
+                  <Button
+                    variant={masteredCards.includes(FLASHCARDS[cardIndex].id) ? 'secondary' : 'outline'}
+                    size="sm"
+                    onClick={() => handleToggleMastered(FLASHCARDS[cardIndex].id)}
+                    className="border-zinc-800 text-xs text-emerald-400 hover:bg-zinc-800"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                    {masteredCards.includes(FLASHCARDS[cardIndex].id) ? 'Mastered ✓' : 'Mark Mastered'}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={cardIndex === FLASHCARDS.length - 1}
+                    onClick={() => { setCardIndex(cardIndex + 1); setIsFlipped(false); }}
+                    className="border-zinc-800 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800"
+                  >
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: CONCEPT DIAGRAM */}
+            {activeTab === 'diagram' && (
+              <div className="space-y-4 animate-fade">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="border-emerald-500/30 text-emerald-400">
+                      Visual Concept Map
+                    </Badge>
+                    <span className="text-xs text-zinc-400">Zoom: {zoomLevel}%</span>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setZoomLevel(Math.min(150, zoomLevel + 10))}
+                      className="h-7 w-7 border-zinc-800 bg-zinc-900 text-zinc-300"
+                    >
+                      <ZoomIn className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setZoomLevel(Math.max(70, zoomLevel - 10))}
+                      className="h-7 w-7 border-zinc-800 bg-zinc-900 text-zinc-300"
+                    >
+                      <ZoomOut className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setZoomLevel(100)}
+                      className="h-7 w-7 border-zinc-800 bg-zinc-900 text-zinc-300"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* SVG Visual Diagram Box */}
+                <Card className="border-zinc-800 bg-zinc-900/60 p-6 flex flex-col items-center justify-center min-h-[260px] overflow-hidden">
+                  <div
+                    style={{ transform: `scale(${zoomLevel / 100})`, transition: 'transform 0.2s ease-out' }}
+                    className="flex flex-col items-center gap-6"
+                  >
+                    <div
+                      onClick={() => setSelectedNode('1')}
+                      className={`cursor-pointer rounded-xl border px-6 py-3 text-xs font-extrabold shadow-md transition-all ${
+                        selectedNode === '1'
+                          ? 'border-emerald-500 bg-emerald-950 text-emerald-200 ring-2 ring-emerald-500/30'
+                          : 'border-zinc-700 bg-zinc-800 text-zinc-100 hover:border-emerald-500/50'
+                      }`}
+                    >
+                      Kinematics (2D Motion)
                     </div>
 
-                    <div className="rounded-xl border border-line bg-surface p-4 shadow-sm space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h5 className="text-sm font-semibold text-ink">2. Maximum Peak Height Calculation</h5>
-                        <button
-                          type="button"
-                          onClick={() => handleTimestampClick(330)}
-                          className="rounded bg-brand-soft px-2 py-0.5 text-xs font-mono font-semibold text-brand hover:bg-brand hover:text-white transition-colors"
-                        >
-                          ▶ 05:30
-                        </button>
+                    <div className="h-6 w-0.5 bg-zinc-700" />
+
+                    <div className="grid grid-cols-2 gap-8">
+                      <div
+                        onClick={() => setSelectedNode('2')}
+                        className={`cursor-pointer rounded-xl border p-4 text-xs font-semibold text-center transition-all ${
+                          selectedNode === '2'
+                            ? 'border-emerald-500 bg-emerald-950 text-emerald-200 ring-2 ring-emerald-500/30'
+                            : 'border-zinc-800 bg-zinc-900 text-zinc-200 hover:border-zinc-700'
+                        }`}
+                      >
+                        <p className="font-bold">Horizontal Axis (X)</p>
+                        <p className="text-[11px] text-zinc-400 mt-1">a_x = 0, v_x = const</p>
                       </div>
-                      <p className="text-xs leading-relaxed text-ink-2">
-                        At the apex of the projectile trajectory, vertical velocity momentarily reaches zero ($v_y = 0$). Solving the kinematic equation yields:
-                      </p>
-                      <div className="rounded-lg bg-sunken p-2.5">
-                        <Formula tex="h_{\text{max}} = \frac{v_0^2 \sin^2\theta}{2g}" />
+
+                      <div
+                        onClick={() => setSelectedNode('3')}
+                        className={`cursor-pointer rounded-xl border p-4 text-xs font-semibold text-center transition-all ${
+                          selectedNode === '3'
+                            ? 'border-emerald-500 bg-emerald-950 text-emerald-200 ring-2 ring-emerald-500/30'
+                            : 'border-zinc-800 bg-zinc-900 text-zinc-200 hover:border-zinc-700'
+                        }`}
+                      >
+                        <p className="font-bold">Vertical Axis (Y)</p>
+                        <p className="text-[11px] text-zinc-400 mt-1">a_y = -g, Peak v_y = 0</p>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Card>
+
+                {/* Node Inspector Card */}
+                {selectedNode && (
+                  <Card className="border-zinc-800 bg-zinc-900/40 p-4 space-y-1.5">
+                    <h5 className="text-xs font-bold text-emerald-400">
+                      Node Details: {selectedNode === '1' ? 'Kinematics' : selectedNode === '2' ? 'Horizontal Axis' : 'Vertical Axis'}
+                    </h5>
+                    <p className="text-xs text-zinc-300 leading-relaxed">
+                      {selectedNode === '1' && 'Two-dimensional projectile motion decouples into independent 1D motions along perpendicular axes.'}
+                      {selectedNode === '2' && 'Since gravity pulls strictly downward, there is no force in the horizontal direction. Thus v_x remains constant.'}
+                      {selectedNode === '3' && 'Gravitational acceleration pulls downward at 9.81 m/s^2. At peak height, vertical velocity momentarily stops.'}
+                    </p>
+                  </Card>
+                )}
               </div>
             )}
 
-            {/* TAB 2: KEY TAKEAWAYS */}
-            {rightTab === 'takeaways' && (
+            {/* TAB 4: QUIZ */}
+            {activeTab === 'quiz' && (
               <div className="space-y-4 animate-fade">
-                <div className="rounded-xl border border-line bg-surface p-5 shadow-e1 space-y-3">
-                  <h4 className="text-sm font-bold text-ink">Core Takeaways to Remember</h4>
-                  <ul className="space-y-2.5 text-xs text-ink-2">
-                    <li className="flex gap-2">
-                      <span className="text-brand font-bold">✓</span>
-                      <span>Horizontal velocity ($v_x$) never changes throughout the trajectory when neglecting drag.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-brand font-bold">✓</span>
-                      <span>Maximum range is achieved at a launch angle of $\theta = 45^\circ$.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-brand font-bold">✓</span>
-                      <span>Time to reach max height equals time to descend back to launch elevation.</span>
-                    </li>
-                  </ul>
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="border-zinc-800 text-zinc-300">
+                    Question {quizIndex + 1} of {QUIZ_QUESTIONS.length}
+                  </Badge>
+                  <span className="text-xs text-emerald-400 font-semibold">Score: {quizScore}</span>
                 </div>
-              </div>
-            )}
 
-            {/* TAB 3: MINDMAP DIAGRAM */}
-            {rightTab === 'mindmap' && (
-              <div className="space-y-4 animate-fade">
-                <div className="rounded-xl border border-line bg-surface p-4 shadow-e1 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold text-ink">Interactive Concept Map</h4>
-                    <span className="text-xs text-ink-3">Click nodes to expand</span>
+                <Card className="border-zinc-800 bg-zinc-900/60 p-5 space-y-4">
+                  <h4 className="text-xs font-bold text-zinc-100 leading-relaxed">
+                    {QUIZ_QUESTIONS[quizIndex].question}
+                  </h4>
+
+                  <div className="space-y-2">
+                    {QUIZ_QUESTIONS[quizIndex].options.map((opt, idx) => {
+                      const isCorrect = idx === QUIZ_QUESTIONS[quizIndex].correct;
+                      const isSelected = selectedOption === idx;
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (selectedOption === null) {
+                              setSelectedOption(idx);
+                              if (isCorrect) setQuizScore(quizScore + 1);
+                            }
+                          }}
+                          className={`flex items-center justify-between rounded-lg border p-3 text-xs font-medium cursor-pointer transition-all ${
+                            selectedOption === null
+                              ? 'border-zinc-800 bg-zinc-950 text-zinc-200 hover:border-zinc-700'
+                              : isSelected
+                              ? isCorrect
+                                ? 'border-emerald-500 bg-emerald-950/60 text-emerald-200'
+                                : 'border-rose-500 bg-rose-950/60 text-rose-200'
+                              : isCorrect
+                              ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300'
+                              : 'border-zinc-800 bg-zinc-950 text-zinc-500 opacity-60'
+                          }`}
+                        >
+                          <span>{opt}</span>
+                          {selectedOption !== null && isSelected && (
+                            isCorrect ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <XCircle className="h-4 w-4 text-rose-400" />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                  <VisualBlock visual={SAMPLE_MINDMAP} />
+
+                  {selectedOption !== null && (
+                    <div className="rounded-lg border border-emerald-500/30 bg-emerald-950/30 p-3 space-y-1 text-xs">
+                      <p className="font-bold text-emerald-400">Explanation</p>
+                      <p className="text-zinc-300 leading-relaxed">{QUIZ_QUESTIONS[quizIndex].explanation}</p>
+                    </div>
+                  )}
+                </Card>
+
+                {selectedOption !== null && quizIndex < QUIZ_QUESTIONS.length - 1 && (
+                  <Button
+                    onClick={() => { setQuizIndex(quizIndex + 1); setSelectedOption(null); }}
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs"
+                  >
+                    Next Question <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {/* TAB 5: FORMULAS */}
+            {activeTab === 'formulas' && (
+              <div className="space-y-4 animate-fade">
+                <div className="relative">
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-500" />
+                  <Input
+                    value={formulaSearch}
+                    onChange={(e) => setFormulaSearch(e.target.value)}
+                    placeholder="Search equations by formula or topic..."
+                    className="pl-9 bg-zinc-900 border-zinc-800 text-xs text-zinc-200 placeholder:text-zinc-500"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  {filteredFormulas.map((f, i) => (
+                    <Card key={i} className="border-zinc-800 bg-zinc-900/50 p-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-zinc-200">{f.label}</span>
+                        <Badge variant="outline" className="border-zinc-800 text-zinc-400 text-[10px]">
+                          {f.topic}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-lg bg-zinc-950 p-3 border border-zinc-800">
+                        <Formula tex={f.tex} />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleCopyFormula(f.tex)}
+                          className="h-7 w-7 text-zinc-400 hover:text-zinc-100"
+                        >
+                          {copiedFormula === f.tex ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* TAB 4: INTERACTIVE NOTES EDITOR */}
-            {rightTab === 'notes' && (
+            {/* TAB 6: NOTES EDITOR */}
+            {activeTab === 'notes' && (
               <div className="space-y-3 animate-fade">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="custom-notes" className="text-xs font-bold text-ink-3 uppercase">
-                    Your Custom Notes (Markdown Supported)
-                  </label>
-                  <span className="text-xs text-ok font-medium">Auto-saved to browser</span>
+                  <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                    Interactive Markdown Note Editor
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSaveNotes}
+                    className="h-7 border-zinc-800 bg-zinc-900 text-xs text-emerald-400 hover:bg-zinc-800"
+                  >
+                    Save Notes
+                  </Button>
                 </div>
+
                 <textarea
-                  id="custom-notes"
                   value={customNotes}
                   onChange={(e) => setCustomNotes(e.target.value)}
-                  rows={12}
-                  className="w-full rounded-xl border border-line bg-surface p-4 text-xs leading-relaxed font-mono text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring shadow-inner"
+                  rows={14}
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 text-xs font-mono leading-relaxed text-zinc-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
             )}
 
-            {/* TAB 5: AI Q&A CHAT */}
-            {rightTab === 'chat' && (
+            {/* TAB 7: AI CHAT Q&A */}
+            {activeTab === 'chat' && (
               <div className="space-y-4 animate-fade">
-                <div className="rounded-xl border border-line bg-surface p-4 shadow-sm space-y-3 min-h-[300px]">
+                <Card className="border-zinc-800 bg-zinc-900/40 p-4 space-y-3 min-h-[300px]">
                   {chatMessages.map((msg, i) => (
                     <div
                       key={i}
@@ -555,47 +880,38 @@ export default function NoteGPTWorkspace() {
                       <div
                         className={`max-w-[85%] rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
                           msg.role === 'user'
-                            ? 'bg-brand text-white rounded-br-none shadow-e1'
-                            : 'bg-sunken border border-line text-ink rounded-bl-none'
+                            ? 'bg-emerald-600 text-white rounded-br-none'
+                            : 'bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-bl-none'
                         }`}
                       >
                         {msg.text}
                       </div>
-                      <span className="text-[10px] text-ink-3 mt-1 px-1">{msg.time}</span>
+                      <span className="text-[10px] text-zinc-500 mt-1 px-1">{msg.time}</span>
                     </div>
                   ))}
-                </div>
+                </Card>
               </div>
             )}
           </div>
 
-          {/* Bottom Sticky Area: "Ask AI about this video/document" Chat Prompt */}
-          <div className="border-t border-line bg-surface p-3.5 shrink-0 z-20">
-            <form onSubmit={handleSendChat} className="flex gap-2 items-center">
-              <button
-                type="button"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-line bg-canvas text-ink-2 hover:bg-sunken hover:text-ink transition-colors"
-                title="Attach file or screenshot"
-              >
-                📎
-              </button>
-
-              <input
-                type="text"
+          {/* Sticky Bottom Chat Input Bar */}
+          <div className="border-t border-zinc-800 bg-zinc-900/90 p-3 shrink-0">
+            <form onSubmit={handleSendChat} className="flex items-center gap-2">
+              <Input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ask AI about this video, formula, or timestamp..."
-                className="flex-1 rounded-xl border border-line bg-canvas px-4 py-2.5 text-xs text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring placeholder:text-ink-3 shadow-inner"
+                placeholder="Ask AI Tutor any question about this lesson..."
+                className="bg-zinc-950 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
               />
 
-              <button
+              <Button
                 type="submit"
                 disabled={!chatInput.trim()}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-4 py-2.5 text-xs font-semibold text-white shadow-e2 hover:bg-brand-hover active:translate-y-px disabled:opacity-40 transition-all shrink-0"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shrink-0"
               >
                 <span>Ask AI</span>
-                <span>→</span>
-              </button>
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
             </form>
           </div>
         </section>

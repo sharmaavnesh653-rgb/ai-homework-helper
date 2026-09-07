@@ -2,6 +2,29 @@ import { useState } from 'react';
 import Formula from './Formula';
 import VisualBlock from './VisualBlock';
 import type { ModeId, TutorAnswer } from '../../lib/types';
+import { Card, CardHeader, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import {
+  CheckCircle2,
+  HelpCircle,
+  Sparkles,
+  BookOpen,
+  Lightbulb,
+  ArrowRight,
+  Copy,
+  Download,
+  Bookmark,
+  ListOrdered,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+  Sliders,
+  Check,
+  AlertTriangle,
+  Send
+} from 'lucide-react';
 
 export interface AnswerActions {
   onSimplify: () => void;
@@ -12,46 +35,6 @@ export interface AnswerActions {
   onAsk: (question: string) => void;
   busy?: boolean;
   savedLabel?: string | null;
-}
-
-function Chip({
-  children,
-  onClick,
-  disabled,
-  tone = 'default',
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  disabled?: boolean;
-  tone?: 'default' | 'brand';
-}) {
-  const base =
-    'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50';
-  const tones = {
-    default:
-      'border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink hover:shadow-e1',
-    brand: 'border-brand/25 bg-brand-soft text-brand hover:border-brand/50 hover:shadow-e1',
-  };
-  return (
-    <button type="button" onClick={onClick} disabled={disabled} className={`${base} ${tones[tone]}`}>
-      {children}
-    </button>
-  );
-}
-
-function Section({
-  overline,
-  children,
-}: {
-  overline: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-2.5">
-      <h4 className="text-overline text-ink-3 uppercase">{overline}</h4>
-      {children}
-    </section>
-  );
 }
 
 export default function AnswerCard({
@@ -120,243 +103,293 @@ export default function AnswerCard({
   };
 
   return (
-    <article className="animate-rise overflow-hidden rounded-xl border border-line bg-surface shadow-e2">
+    <Card className="overflow-hidden border-zinc-800 bg-zinc-900/90 shadow-2xl backdrop-blur-md space-y-0">
       {/* What the question is asking */}
-      <header className="border-b border-line bg-sunken/60 px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h3 className="text-overline mb-1 text-ink-3 uppercase">What you're being asked</h3>
-          <p className="text-[15px] leading-relaxed font-medium text-ink">
+      <CardHeader className="border-b border-zinc-800 bg-zinc-950/60 px-5 py-4 sm:px-6 flex flex-row items-center justify-between gap-3">
+        <div className="space-y-1">
+          <Badge className="bg-emerald-950 text-emerald-300 border-emerald-500/30 text-[10px] font-mono uppercase tracking-wider">
+            Target Understanding
+          </Badge>
+          <p className="text-sm sm:text-base font-semibold text-zinc-100 leading-snug">
             {answer.understanding}
           </p>
         </div>
 
         {totalSteps > 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setStepByStep(!stepByStep);
-                if (!stepByStep) setRevealedCount(1);
-              }}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-semibold text-ink-2 transition-all hover:border-brand/40 hover:text-brand"
-            >
-              <span>{stepByStep ? '👁 View all steps' : '🐾 Step-by-step reveal'}</span>
-            </button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setStepByStep(!stepByStep);
+              if (!stepByStep) setRevealedCount(1);
+            }}
+            className="h-8 gap-1.5 border-zinc-800 bg-zinc-900 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 shrink-0"
+          >
+            <ListOrdered className="h-3.5 w-3.5 text-emerald-400" />
+            <span>{stepByStep ? 'View All Steps' : 'Step-by-Step Reveal'}</span>
+          </Button>
+        )}
+      </CardHeader>
+
+      <CardContent className="p-5 sm:p-6 space-y-7">
+        {/* DIRECT FINAL ANSWER (When present) */}
+        {answer.finalAnswer && (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 flex items-start gap-3">
+            <div className="grid h-7 w-7 place-items-center rounded-lg bg-emerald-600 text-white font-bold shrink-0">
+              <CheckCircle2 className="h-4 w-4" />
+            </div>
+            <div className="space-y-0.5 min-w-0">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400">Final Direct Answer</span>
+              <p className="text-sm font-bold text-zinc-100 leading-relaxed">
+                {answer.finalAnswer}
+              </p>
+            </div>
           </div>
         )}
-      </header>
 
-      <div className="space-y-7 px-5 py-6 sm:px-6">
-        {/* Reasoning steps — the core */}
-        <Section overline={mode === 'hint' ? 'Your nudge' : 'Working through it'}>
-          {/* Step reveal progress bar when step-by-step mode is on */}
-          {stepByStep && (
-            <div className="mb-4 space-y-1.5 rounded-lg border border-line bg-canvas p-3">
-              <div className="flex items-center justify-between text-xs font-semibold text-ink">
-                <span>Step Progress</span>
-                <span className="text-brand">
-                  Step {revealedCount} of {totalSteps}
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-sunken">
-                <div
-                  className="h-full bg-brand transition-all duration-300 rounded-full"
-                  style={{ width: `${(revealedCount / totalSteps) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
+        {/* HOW TO SOLVE: Reasoning steps */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">
+              {mode === 'hint' ? 'Guided Hint' : 'How To Solve'}
+            </h4>
+            {stepByStep && (
+              <span className="text-xs font-mono text-emerald-400 font-bold">
+                Step {revealedCount} of {totalSteps}
+              </span>
+            )}
+          </div>
 
-          <ol className="space-y-5">
+          <ol className="space-y-4">
             {displayedSteps.map((step, i) => (
-              <li key={i} className="animate-rise relative flex gap-3.5">
-                {/* Connector rail between step markers */}
+              <li key={i} className="relative flex gap-3.5">
                 {i < displayedSteps.length - 1 && (
                   <span
-                    className="absolute top-8 left-[13px] w-px bg-line"
-                    style={{ bottom: '-1.25rem' }}
+                    className="absolute top-8 left-[13px] w-px bg-zinc-800"
+                    style={{ bottom: '-1rem' }}
                     aria-hidden="true"
                   />
                 )}
-                <span className="relative z-10 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand text-[13px] font-semibold text-white shadow-sm">
+                <span className="relative z-10 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-emerald-600 text-xs font-bold text-white shadow-sm font-mono">
                   {i + 1}
                 </span>
                 <div className="min-w-0 flex-1 space-y-2 pt-0.5">
                   <div className="flex items-center justify-between gap-2">
-                    <h5 className="text-[15px] leading-snug font-semibold text-ink">
+                    <h5 className="text-sm font-bold text-zinc-100">
                       {step.title}
                     </h5>
                     <button
                       type="button"
                       onClick={() => setOpenHintIndex(openHintIndex === i ? null : i)}
-                      className="text-xs font-medium text-brand hover:underline"
+                      className="text-xs font-medium text-emerald-400 hover:underline inline-flex items-center gap-1"
                     >
-                      {openHintIndex === i ? 'Hide hint' : '💡 Step hint'}
+                      <Lightbulb className="h-3 w-3" />
+                      <span>{openHintIndex === i ? 'Hide hint' : 'Step hint'}</span>
                     </button>
                   </div>
 
-                  <p className="text-[15px] leading-relaxed text-ink-2">{step.detail}</p>
+                  <p className="text-xs sm:text-sm leading-relaxed text-zinc-300">{step.detail}</p>
 
                   {openHintIndex === i && (
-                    <div className="animate-fade rounded-lg border border-brand/20 bg-brand-soft/60 px-3.5 py-2.5 text-xs text-ink-2">
-                      <span className="font-semibold text-brand">Hint for Step {i + 1}:</span> Focus on identifying the key variables first before applying the formula.
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-950/30 p-3 text-xs text-zinc-300 space-y-1">
+                      <span className="font-bold text-emerald-400">Hint for Step {i + 1}:</span>
+                      <p>Focus on identifying given variables before applying the equation.</p>
                     </div>
                   )}
 
                   {step.formula && (
-                    <div className="scroll-slim overflow-x-auto rounded-lg bg-sunken px-3.5 py-3">
+                    <div className="scroll-slim overflow-x-auto rounded-lg bg-zinc-950 border border-zinc-800 p-3">
                       <Formula tex={step.formula} />
                     </div>
                   )}
+
                   {step.note && (
-                    <p className="flex gap-2 rounded-md border-l-2 border-accent bg-accent-soft px-3 py-2 text-sm leading-relaxed text-ink-2">
-                      <span aria-hidden="true">⚠</span>
+                    <div className="flex gap-2 rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-200">
+                      <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
                       <span>{step.note}</span>
-                    </p>
+                    </div>
                   )}
                 </div>
               </li>
             ))}
           </ol>
 
-          {/* Show Next Step Button */}
           {stepByStep && revealedCount < totalSteps && (
-            <div className="pt-3 flex justify-center">
-              <button
-                type="button"
+            <div className="pt-2 flex justify-center">
+              <Button
                 onClick={() => setRevealedCount((prev) => Math.min(prev + 1, totalSteps))}
-                className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-e2 transition-all hover:bg-brand-hover hover:shadow-e3 active:translate-y-px"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 text-xs font-semibold"
               >
-                <span>Show Next Step ({revealedCount + 1} of {totalSteps})</span>
-                <span aria-hidden="true">↓</span>
-              </button>
+                <span>Reveal Next Step ({revealedCount + 1} of {totalSteps})</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
             </div>
           )}
-        </Section>
+        </section>
 
+        {/* WHY: Key Formula Summary */}
         {answer.formulaSummary && (
-          <Section overline="Formula to remember">
-            <div className="scroll-slim overflow-x-auto rounded-lg border border-line bg-sunken px-3.5 py-3.5">
+          <section className="space-y-2">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Formula To Remember</h4>
+            <div className="scroll-slim overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 p-4">
               <Formula tex={answer.formulaSummary} />
             </div>
-          </Section>
+          </section>
         )}
 
+        {/* VISUAL EXPLANATION */}
         {answer.visual && (
-          <Section overline="Visual explanation">
+          <section className="space-y-2">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Visual Diagram</h4>
             <VisualBlock visual={answer.visual} />
-          </Section>
+          </section>
         )}
 
+        {/* KEY CONCEPTS */}
         {answer.concepts.length > 0 && (
-          <Section overline="Key concepts">
-            <dl className="grid gap-2.5 sm:grid-cols-2">
+          <section className="space-y-2">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Key Concepts</h4>
+            <div className="grid gap-2.5 sm:grid-cols-2">
               {answer.concepts.map((c) => (
-                <div key={c.term} className="rounded-lg border border-line bg-canvas px-3.5 py-3">
-                  <dt className="text-sm font-semibold text-ink">{c.term}</dt>
-                  <dd className="mt-1 text-sm leading-relaxed text-ink-2">{c.meaning}</dd>
+                <div key={c.term} className="rounded-xl border border-zinc-800 bg-zinc-950 p-3.5 space-y-1">
+                  <dt className="text-xs font-bold text-emerald-400">{c.term}</dt>
+                  <dd className="text-xs leading-relaxed text-zinc-300">{c.meaning}</dd>
                 </div>
               ))}
-            </dl>
-          </Section>
+            </div>
+          </section>
         )}
 
+        {/* EXAMPLE */}
         {answer.workedExample && (
-          <Section overline="Another example">
-            <div className="space-y-2 rounded-lg border border-line bg-canvas px-4 py-3.5">
-              <p className="text-sm font-semibold text-ink">{answer.workedExample.prompt}</p>
-              <p className="text-sm leading-relaxed text-ink-2">
-                {answer.workedExample.walkthrough}
-              </p>
+          <section className="space-y-2">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Related Example</h4>
+            <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+              <p className="text-xs font-bold text-zinc-200">{answer.workedExample.prompt}</p>
+              <p className="text-xs leading-relaxed text-zinc-400">{answer.workedExample.walkthrough}</p>
             </div>
-          </Section>
+          </section>
         )}
 
-        {answer.finalAnswer ? (
-          <div className="flex items-start gap-3 rounded-lg border border-ok/30 bg-ok-soft px-4 py-3.5">
-            <span
-              className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-ok text-[11px] font-bold text-white"
-              aria-hidden="true"
-            >
-              ✓
-            </span>
-            <div>
-              <h4 className="text-overline text-ok uppercase">Final answer</h4>
-              <p className="mt-1 text-[15px] leading-relaxed font-semibold text-ink">
-                {answer.finalAnswer}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <p className="rounded-lg border border-dashed border-line-strong px-4 py-3 text-sm leading-relaxed text-ink-3">
-            {mode === 'hint'
-              ? 'No answer here — that part is yours. Ask again if you need the next hint.'
-              : "No corrected version on purpose — the improved answer should come from you."}
-          </p>
-        )}
-
-        {/* Interactive Check Yourself section */}
-        <div className="space-y-3 rounded-xl border-l-4 border-brand bg-brand-soft/70 px-5 py-4 shadow-sm">
+        {/* INTERACTIVE CHECK YOURSELF */}
+        <section className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-overline text-brand uppercase font-bold tracking-wider">Check yourself</h4>
-            <span className="text-xs font-semibold text-brand/80">Interactive Practice</span>
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">Check Yourself Question</h4>
+            <Badge className="bg-emerald-900/60 text-emerald-300 border-emerald-500/30 text-[10px]">Active Practice</Badge>
           </div>
-          <p className="text-[15px] leading-relaxed text-ink font-medium">{answer.checkYourself}</p>
+
+          <p className="text-xs sm:text-sm font-semibold text-zinc-100">{answer.checkYourself}</p>
 
           <form onSubmit={handleCheckSubmit} className="space-y-2 pt-1">
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={studentCheckInput}
                 onChange={(e) => setStudentCheckInput(e.target.value)}
-                placeholder="Type your answer to verify understanding..."
-                className="flex-1 rounded-lg border border-line bg-surface px-3.5 py-2 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring placeholder:text-ink-3"
+                placeholder="Type your answer to verify your understanding..."
+                className="bg-zinc-950 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={!studentCheckInput.trim() || actions.busy}
-                className="rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white hover:bg-brand-hover active:translate-y-px disabled:opacity-50 transition-all shrink-0"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold gap-1.5 shrink-0"
               >
-                Submit Answer
-              </button>
+                <span>Submit</span>
+                <Send className="h-3.5 w-3.5" />
+              </Button>
             </div>
             {checkSubmitted && (
-              <p className="animate-fade text-xs font-medium text-ok flex items-center gap-1.5 pt-1">
-                <span>✓ Attempt submitted! Checking your response with tutor below...</span>
+              <p className="text-xs font-medium text-emerald-400 flex items-center gap-1.5 pt-1">
+                <Check className="h-3.5 w-3.5" />
+                <span>Submitted! Checking your response with AI tutor below...</span>
               </p>
             )}
           </form>
-        </div>
+        </section>
 
-        {/* Actions */}
-        <div className="space-y-3 border-t border-line pt-5">
+        {/* NEXT ACTIONS TOOLBAR */}
+        <div className="space-y-3 pt-3 border-t border-zinc-800">
           <div className="flex flex-wrap gap-2">
-            <Chip onClick={actions.onSimplify} disabled={actions.busy}>
-              Explain simpler
-            </Chip>
-            <Chip onClick={actions.onDetailed} disabled={actions.busy}>
-              More detail
-            </Chip>
-            <Chip onClick={actions.onRegenerate} disabled={actions.busy}>
-              Regenerate
-            </Chip>
-            <Chip onClick={actions.onPractise} disabled={actions.busy} tone="brand">
-              Practise this
-            </Chip>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={actions.onSimplify}
+              disabled={actions.busy}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800"
+            >
+              Explain Simpler
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={actions.onDetailed}
+              disabled={actions.busy}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800"
+            >
+              More Detail
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={actions.onRegenerate}
+              disabled={actions.busy}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-zinc-400" />
+              <span>Regenerate</span>
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={actions.onPractise}
+              disabled={actions.busy}
+              className="h-8 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold gap-1.5"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Make Flashcards & Quiz</span>
+            </Button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Chip onClick={actions.onSaveNote} disabled={actions.busy}>
-              {actions.savedLabel ?? 'Save to notes'}
-            </Chip>
-            <Chip onClick={copy}>{copied ? 'Copied ✓' : 'Copy'}</Chip>
-            <Chip onClick={download}>Download</Chip>
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={actions.onSaveNote}
+              disabled={actions.busy}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+            >
+              <Bookmark className="h-3.5 w-3.5 text-emerald-400" />
+              <span>{actions.savedLabel ?? 'Save to Notes'}</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copy}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+            >
+              <Copy className="h-3.5 w-3.5 text-zinc-400" />
+              <span>{copied ? 'Copied ✓' : 'Copy Text'}</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={download}
+              className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+            >
+              <Download className="h-3.5 w-3.5 text-zinc-400" />
+              <span>Export Solution</span>
+            </Button>
           </div>
         </div>
 
-        {/* Suggested follow-ups, in the student's voice */}
+        {/* SUGGESTED FOLLOW-UPS */}
         {answer.followUps.length > 0 && (
-          <Section overline="Ask next">
+          <section className="space-y-2 pt-2 border-t border-zinc-800/80">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Ask Next</h4>
             <div className="flex flex-wrap gap-2">
               {answer.followUps.slice(0, 3).map((f) => (
                 <button
@@ -364,15 +397,15 @@ export default function AnswerCard({
                   type="button"
                   disabled={actions.busy}
                   onClick={() => actions.onAsk(f)}
-                  className="rounded-full border border-line bg-canvas px-3.5 py-1.5 text-left text-sm text-ink-2 transition-all hover:border-brand/40 hover:bg-brand-soft hover:text-brand disabled:opacity-50"
+                  className="rounded-full border border-zinc-800 bg-zinc-950 px-3.5 py-1.5 text-left text-xs font-medium text-zinc-300 transition-all hover:border-emerald-500/40 hover:bg-emerald-950/30 hover:text-emerald-300"
                 >
                   {f}
                 </button>
               ))}
             </div>
-          </Section>
+          </section>
         )}
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }

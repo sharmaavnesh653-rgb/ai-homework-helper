@@ -6,6 +6,16 @@ import { Button } from '../ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
+import {
+  Sliders,
+  Sparkles,
+  Bookmark,
+  Compass,
+  Table,
+  LineChart,
+  Network,
+  Layers
+} from 'lucide-react';
 
 const SAMPLE_DIAGRAMS: Record<string, Visual> = {
   photosynthesis: {
@@ -81,7 +91,6 @@ export default function DiagramsWorkspace() {
     setSavedLabel(null);
 
     setTimeout(() => {
-      // Custom visual generation mapping
       if (diagramType === 'table') {
         setCurrentVisual({
           kind: 'table',
@@ -159,21 +168,22 @@ export default function DiagramsWorkspace() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="space-y-2 border-b border-line pb-6">
+      <div className="space-y-2 border-b border-zinc-800 pb-6">
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="px-2.5 py-1 text-xs">
-            Visual Learning
+          <Badge className="bg-emerald-950 text-emerald-400 border-emerald-500/30 gap-1.5 px-3 py-1 font-mono text-xs">
+            <Sliders className="h-3.5 w-3.5" />
+            <span>Visual Learning</span>
           </Badge>
-          <h1 className="text-h2 font-bold text-ink">Diagrams & Concept Maps</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">Diagrams & Concept Maps</h1>
         </div>
-        <p className="text-sm text-ink-2 max-w-2xl">
-          Transform any topic, formula, or history event into structured visual mindmaps, flowcharts, timelines, and labelled diagrams.
+        <p className="text-xs sm:text-sm text-zinc-400 max-w-2xl">
+          Transform complex topics, equations, or history timelines into visual flowcharts, labelled diagrams, and concept maps.
         </p>
       </div>
 
       {/* Generator Form Card */}
-      <Card className="p-5 shadow-e1 space-y-4">
-        <label htmlFor="topic-input" className="block text-xs font-bold uppercase tracking-wider text-ink-3">
+      <Card className="p-5 border-zinc-800 bg-zinc-950/90 shadow-2xl space-y-4 backdrop-blur-md">
+        <label htmlFor="topic-input" className="block text-xs font-mono font-bold text-zinc-400 uppercase">
           Topic or Question to Visualize
         </label>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -183,44 +193,54 @@ export default function DiagramsWorkspace() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g. Photosynthesis, Pythagorean Theorem, French Revolution, Mitosis..."
-            className="flex-1 h-10 text-sm"
+            className="flex-1 bg-zinc-900 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
           />
           <Button
             type="button"
             onClick={handleGenerate}
             disabled={!topic.trim() || loading}
-            size="lg"
-            className="shrink-0"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 shrink-0 gap-1.5"
           >
-            {loading ? 'Generating...' : 'Generate Visual'}
+            <Sparkles className="h-4 w-4" />
+            <span>{loading ? 'Generating...' : 'Generate Visual'}</span>
           </Button>
         </div>
 
         {/* Diagram Type Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-line">
-          <span className="text-xs font-semibold text-ink-3">Format:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-zinc-800">
+          <span className="text-xs font-mono text-zinc-400 font-bold">Format:</span>
           {[
-            { id: 'concept-map', label: 'Concept Map' },
-            { id: 'labelled', label: 'Labelled Diagram' },
-            { id: 'table', label: 'Comparison Table / Timeline' },
-            { id: 'chart', label: 'Quantitative Graph' },
-          ].map((type) => (
-            <Button
-              key={type.id}
-              type="button"
-              variant={diagramType === type.id ? 'secondary' : 'outline'}
-              size="sm"
-              onClick={() => setDiagramType(type.id as any)}
-            >
-              {type.label}
-            </Button>
-          ))}
+            { id: 'concept-map', label: 'Concept Map', icon: Network },
+            { id: 'labelled', label: 'Labelled Diagram', icon: Layers },
+            { id: 'table', label: 'Timeline / Table', icon: Table },
+            { id: 'chart', label: 'Quantitative Graph', icon: LineChart },
+          ].map((type) => {
+            const Icon = type.icon;
+            const active = diagramType === type.id;
+            return (
+              <Button
+                key={type.id}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDiagramType(type.id as any)}
+                className={`h-8 gap-1.5 text-xs ${
+                  active
+                    ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300 font-semibold'
+                    : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{type.label}</span>
+              </Button>
+            );
+          })}
         </div>
       </Card>
 
       {/* Preset Starters */}
       <div className="space-y-2">
-        <span className="text-overline text-ink-3 uppercase">Try an example visual</span>
+        <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-500 block">Try an example visual:</span>
         <div className="flex flex-wrap gap-2">
           {[
             { label: 'Photosynthesis Process', key: 'photosynthesis' },
@@ -228,29 +248,27 @@ export default function DiagramsWorkspace() {
             { label: 'Stages of Mitosis', key: 'cell_mitosis' },
             { label: 'French Revolution Timeline', key: 'history_timeline' },
           ].map((p) => (
-            <Button
+            <button
               key={p.key}
               type="button"
-              variant="outline"
-              size="sm"
               onClick={() => {
                 setCurrentVisual(SAMPLE_DIAGRAMS[p.key]);
                 setTopic(p.label);
               }}
-              className="rounded-full text-xs font-medium"
+              className="rounded-full border border-zinc-800 bg-zinc-900/60 px-3.5 py-1.5 text-xs font-medium text-zinc-300 transition-all hover:border-emerald-500/50 hover:bg-emerald-950/30 hover:text-emerald-300"
             >
               {p.label}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Visual Block Stage Card */}
-      <Card className="p-6 shadow-e2 space-y-4">
-        <CardHeader className="p-0 pb-4 border-b border-line flex-row items-center justify-between space-y-0">
+      <Card className="p-6 border-zinc-800 bg-zinc-950 shadow-2xl space-y-4">
+        <CardHeader className="p-0 pb-4 border-b border-zinc-800 flex-row items-center justify-between space-y-0">
           <div>
-            <CardTitle>{currentVisual.caption ?? 'Visual Representation'}</CardTitle>
-            <CardDescription className="uppercase font-mono mt-1">{currentVisual.kind} format</CardDescription>
+            <CardTitle className="text-base font-bold text-zinc-100">{currentVisual.caption ?? 'Visual Representation'}</CardTitle>
+            <CardDescription className="uppercase font-mono text-[10px] text-emerald-400 mt-1">{currentVisual.kind} format</CardDescription>
           </div>
 
           <Button
@@ -258,8 +276,10 @@ export default function DiagramsWorkspace() {
             variant="outline"
             size="sm"
             onClick={handleSaveDiagram}
+            className="border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
           >
-            {savedLabel ?? 'Save to Library'}
+            <Bookmark className="h-3.5 w-3.5 text-emerald-400" />
+            <span>{savedLabel ?? 'Save to Library'}</span>
           </Button>
         </CardHeader>
 

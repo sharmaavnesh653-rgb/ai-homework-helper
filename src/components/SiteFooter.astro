@@ -1,61 +1,60 @@
 ---
-import Wordmark from './Wordmark.astro';
+import { GraduationCap } from 'lucide-react';
 
 const year = new Date().getFullYear();
 
 const columns = [
   {
-    heading: 'Study',
+    heading: 'HOME',
     links: [
-      { href: '/solve', label: 'Homework solver' },
-      { href: '/notes', label: 'Study notes' },
-      { href: '/practice', label: 'Practice' },
+      { href: '/', label: 'Home Overview' },
+      { href: '/solve', label: 'Homework Solver' },
+    ],
+  },
+  {
+    heading: 'STUDY',
+    links: [
+      { href: '/notes', label: 'Study Notes' },
       { href: '/subjects', label: 'Subjects' },
+      { href: '/practice', label: 'Practice' },
+      { href: '/flashcards', label: 'Flashcards' },
+      { href: '/diagrams', label: 'Diagrams' },
     ],
   },
   {
-    heading: 'Your work',
+    heading: 'LIBRARY',
     links: [
-      { href: '/saved', label: 'Saved notes' },
-      { href: '/history', label: 'Study history' },
-    ],
-  },
-  {
-    heading: 'Trust',
-    links: [
-      { href: '/for-teachers', label: 'For teachers' },
-      { href: '/#compare', label: "Why we're different" },
-      { href: '/#faq', label: 'FAQ' },
+      { href: '/saved', label: 'Saved Work' },
+      { href: '/history', label: 'Study History' },
     ],
   },
 ];
 ---
 
-<footer class="mt-20 border-t border-line bg-sunken">
-  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-    <div class="flex flex-col gap-10 md:flex-row md:justify-between">
+<footer class="mt-16 border-t border-zinc-800/80 bg-zinc-950/80 text-zinc-400 text-xs">
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div class="flex flex-col gap-8 md:flex-row md:justify-between">
       <div class="max-w-xs space-y-3">
-        <Wordmark />
-        <p class="text-sm leading-relaxed text-ink-2">
-          A study companion built to make you understand the work — not to hand
-          you something to copy.
+        <div class="flex items-center gap-2">
+          <div class="grid h-7 w-7 place-items-center rounded-lg bg-emerald-600 font-extrabold text-white">
+            <GraduationCap class="h-4 w-4" />
+          </div>
+          <span class="text-sm font-bold tracking-tight text-zinc-100">Stepwise AI</span>
+        </div>
+        <p class="text-xs leading-relaxed text-zinc-400">
+          Student-first AI study companion built for deep understanding, step-by-step reasoning, and active recall.
         </p>
-        <ul class="space-y-1 pt-1 text-xs text-ink-3">
-          <li>No ads, on any plan</li>
-          <li>No essay “humanizer”</li>
-          <li>Cancel in one click</li>
-        </ul>
       </div>
 
       <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
         {
           columns.map((col) => (
             <div class="space-y-2.5">
-              <h2 class="text-overline text-ink-3 uppercase">{col.heading}</h2>
-              <ul class="space-y-2 text-sm text-ink-2">
+              <h4 class="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider">{col.heading}</h4>
+              <ul class="space-y-2 font-medium">
                 {col.links.map((link) => (
                   <li>
-                    <a class="transition-colors hover:text-ink" href={link.href}>
+                    <a class="transition-colors hover:text-emerald-400" href={link.href}>
                       {link.label}
                     </a>
                   </li>
@@ -67,11 +66,9 @@ const columns = [
       </div>
     </div>
 
-    <div
-      class="mt-10 flex flex-col gap-2.5 border-t border-line pt-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <p>&copy; {year} Stepwise. Built for students who want to actually learn.</p>
-      <p>Explanations are AI-generated. Check the reasoning before you turn work in.</p>
+    <div class="mt-8 flex flex-col gap-2 border-t border-zinc-800/60 pt-6 text-[11px] font-mono text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; {year} Stepwise AI. Designed for students who want to actually learn.</p>
+      <p>Explanations are AI-generated. Verify reasoning steps during revision.</p>
     </div>
   </div>
 </footer>

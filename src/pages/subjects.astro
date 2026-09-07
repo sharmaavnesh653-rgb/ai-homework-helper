@@ -1,80 +1,118 @@
 ---
 import Site from '../layouts/Site.astro';
-import PageHeader from '../components/PageHeader.astro';
 import { SUBJECTS, BOOKS, EXAMPLES } from '../lib/curriculum';
+import {
+  Compass,
+  BookOpen,
+  Sparkles,
+  ArrowRight,
+  Calculator,
+  Atom,
+  FlaskConical,
+  Dna,
+  Landmark,
+  PenTool,
+  Globe,
+  Code
+} from 'lucide-react';
+
+const ICON_MAP: Record<string, any> = {
+  math: Calculator,
+  physics: Atom,
+  chemistry: FlaskConical,
+  biology: Dna,
+  history: Landmark,
+  english: PenTool,
+  geography: Globe,
+  cs: Code,
+};
 ---
 
 <Site
-  title="Subjects — Stepwise"
-  description="Mathematics, physics, chemistry, biology, history, English, geography and computer science — with the chapters and example questions covered in each."
+  title="Subjects Directory — Stepwise AI"
+  description="Mathematics, Physics, Chemistry, Biology, History, English, Geography and Computer Science."
 >
-  <PageHeader
-    overline="Subjects"
-    title="What you can get help with"
-    lede="Eight subjects, each with textbook chapters for study notes and example questions you can send straight to the solver."
-  />
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
+    
+    {/* Page Header */}
+    <div class="space-y-2 border-b border-zinc-800 pb-6">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 font-mono text-xs font-semibold text-emerald-300">
+          <Compass class="h-3.5 w-3.5" />
+          <span>Curriculum Hub</span>
+        </span>
+        <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-zinc-100">Subjects Directory</h1>
+      </div>
+      <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        Eight core subjects with textbook chapter summaries and example questions ready to send straight to the solver.
+      </p>
+    </div>
 
-  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-    <div class="grid gap-5 md:grid-cols-2">
+    {/* Subjects Grid */}
+    <div class="grid gap-6 md:grid-cols-2">
       {
         SUBJECTS.map((subject) => {
+          const Icon = ICON_MAP[subject.id] ?? Compass;
           const books = BOOKS[subject.id] ?? [];
           const chapters = books.flatMap((b) => b.chapters);
           const examples = EXAMPLES.filter((e) => e.subject === subject.id);
 
           return (
-            <article class="group flex flex-col rounded-xl border border-line bg-surface p-5 shadow-e1 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-e3">
-              <div class="flex items-start gap-3.5">
-                <span
-                  class="grid h-11 w-11 shrink-0 place-items-center rounded-lg text-lg"
-                  style={`background: color-mix(in oklab, var(--color-${subject.hue}) 12%, transparent); color: var(--color-${subject.hue})`}
-                  aria-hidden="true"
-                >
-                  {subject.glyph}
-                </span>
-                <div class="min-w-0 flex-1">
-                  <h2 class="text-h3 text-ink">{subject.name}</h2>
-                  <p class="mt-1 text-sm leading-relaxed text-ink-2">
-                    {subject.blurb}
-                  </p>
+            <article class="group flex flex-col justify-between rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-xl transition-all duration-200 hover:border-emerald-500/40 hover:bg-zinc-900/60">
+              <div class="space-y-4">
+                <div class="flex items-start gap-3.5">
+                  <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 group-hover:scale-105 transition-transform">
+                    <Icon class="h-5 w-5" />
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <h2 class="text-base font-bold text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                      {subject.name}
+                    </h2>
+                    <p class="mt-1 text-xs leading-relaxed text-zinc-400">
+                      {subject.blurb}
+                    </p>
+                  </div>
                 </div>
+
+                <div class="flex gap-6 text-xs font-mono text-zinc-400 pt-2 border-t border-zinc-800/60">
+                  <div>
+                    <span class="text-[10px] uppercase font-bold text-zinc-500 block">Textbooks</span>
+                    <span class="font-bold text-zinc-200">{books.length}</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] uppercase font-bold text-zinc-500 block">Chapters</span>
+                    <span class="font-bold text-zinc-200">{chapters.length}</span>
+                  </div>
+                </div>
+
+                {examples.length > 0 && (
+                  <div class="space-y-1.5 pt-1">
+                    <span class="text-[10px] font-mono font-bold text-zinc-500 uppercase">Example Problem:</span>
+                    <a
+                      href={`/solve?question=${encodeURIComponent(examples[0].question)}&subject=${subject.id}`}
+                      class="block rounded-xl border border-zinc-800 bg-zinc-900/80 p-3 text-xs leading-relaxed text-zinc-300 transition-all hover:border-emerald-500/40 hover:text-emerald-300"
+                    >
+                      "{examples[0].question}"
+                    </a>
+                  </div>
+                )}
               </div>
 
-              <dl class="mt-4 flex gap-6 text-sm">
-                <div>
-                  <dt class="text-overline text-ink-3 uppercase">Chapters</dt>
-                  <dd class="mt-0.5 font-semibold text-ink">{chapters.length}</dd>
-                </div>
-                <div>
-                  <dt class="text-overline text-ink-3 uppercase">Textbooks</dt>
-                  <dd class="mt-0.5 font-semibold text-ink">{books.length}</dd>
-                </div>
-              </dl>
-
-              {examples.length > 0 && (
-                <div class="mt-4 space-y-2">
-                  <p class="text-overline text-ink-3 uppercase">Example question</p>
-                  <a
-                    href={`/solve?q=${encodeURIComponent(examples[0].question)}`}
-                    class="block rounded-lg border border-line bg-canvas px-3.5 py-2.5 text-sm leading-relaxed text-ink-2 transition-all hover:border-brand/40 hover:text-brand"
-                  >
-                    {examples[0].question}
-                  </a>
-                </div>
-              )}
-
-              <div class="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
+              <div class="mt-6 flex items-center gap-3 border-t border-zinc-800/80 pt-4">
                 <a
-                  href="/solve"
-                  class="rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                  href={`/solve?subject=${subject.id}`}
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500 transition-all"
                 >
-                  Ask a question
+                  <Sparkles class="h-3.5 w-3.5" />
+                  <span>Solve Question</span>
                 </a>
+
                 <a
                   href="/notes"
-                  class="rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+                  class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-3.5 py-1.5 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all"
                 >
-                  Chapter notes
+                  <BookOpen class="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Chapter Notes</span>
                 </a>
               </div>
             </article>

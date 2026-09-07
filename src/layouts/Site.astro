@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import Nav from '../components/Nav.astro';
+import AppSidebar from '../components/react/AppSidebar';
 import SiteFooter from '../components/SiteFooter.astro';
 import { THEME_KEY } from '../lib/storage';
 
@@ -10,10 +10,11 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,10 +27,6 @@ const { title, description } = Astro.props;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
 
-    {/*
-      Set the theme class before first paint so a dark-mode visitor never sees a
-      white flash. Inlined deliberately — a module import would run too late.
-    */}
     <script is:inline define:vars={{ THEME_KEY }}>
       try {
         const stored = localStorage.getItem(THEME_KEY);
@@ -37,26 +34,31 @@ const { title, description } = Astro.props;
           stored === 'dark' ||
           (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
         if (dark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
       } catch {
-        /* private mode: stay light */
+        document.documentElement.classList.add('dark');
       }
     </script>
   </head>
 
-  <body class="flex min-h-screen flex-col">
+  <body class="flex min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30 overflow-x-hidden">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-canvas"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:text-white"
     >
       Skip to content
     </a>
 
-    <Nav />
+    {/* Application Shell Wrapper */}
+    <div class="flex min-h-screen w-full flex-col lg:flex-row">
+      <AppSidebar client:load pathname={pathname} />
 
-    <main id="main" class="flex-1">
-      <slot />
-    </main>
-
-    <SiteFooter />
+      <div class="flex flex-1 flex-col min-w-0 pb-16 lg:pb-0">
+        <main id="main" class="flex-1">
+          <slot />
+        </main>
+        <SiteFooter />
+      </div>
+    </div>
   </body>
 </html>

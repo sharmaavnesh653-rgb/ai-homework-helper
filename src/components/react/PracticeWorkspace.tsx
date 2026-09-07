@@ -5,8 +5,20 @@ import { postJson } from '../../lib/client/sse';
 import { GRADES, SUBJECTS, subjectById, type SubjectId } from '../../lib/curriculum';
 import type { PracticeSet } from '../../lib/types';
 import { Button } from '../ui/button';
-import { Card, CardTitle, CardDescription } from '../ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
+import {
+  HelpCircle,
+  Layers,
+  Sparkles,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  ArrowLeft,
+  ArrowRight,
+  Check
+} from 'lucide-react';
 
 type Tab = 'flashcards' | 'quiz';
 
@@ -27,7 +39,6 @@ export default function PracticeWorkspace() {
   const [picked, setPicked] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  // Prefill from the "Practise this" action on an answer card.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const t = params.get('topic');
@@ -70,12 +81,14 @@ export default function PracticeWorkspace() {
   return (
     <div className="space-y-8">
       {/* Setup Card */}
-      <Card className="space-y-4 p-5 shadow-e1 sm:p-6">
+      <Card className="space-y-4 p-5 sm:p-6 border-zinc-800 bg-zinc-950/90 shadow-2xl backdrop-blur-md">
         <div>
-          <CardTitle className="text-h3 text-ink">What do you want to practise?</CardTitle>
-          <CardDescription className="mt-1 text-sm leading-relaxed text-ink-2">
-            Flashcards to drill recall, then a quiz that explains every answer —
-            including why the tempting wrong one is wrong.
+          <CardTitle className="text-base font-bold text-zinc-100 flex items-center gap-2">
+            <Layers className="h-5 w-5 text-emerald-400" />
+            <span>Practice & Active Recall Setup</span>
+          </CardTitle>
+          <CardDescription className="mt-1 text-xs leading-relaxed text-zinc-400">
+            Flashcards to drill recall, then a quiz that explains every answer — including the misconception behind wrong choices.
           </CardDescription>
         </div>
 
@@ -103,8 +116,8 @@ export default function PracticeWorkspace() {
         </div>
 
         <div>
-          <label htmlFor="topic" className="mb-1.5 block text-overline text-ink-3 uppercase">
-            Topic
+          <label htmlFor="topic" className="mb-1.5 block text-xs font-mono font-bold text-zinc-400 uppercase">
+            Topic to Practice
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
@@ -112,17 +125,17 @@ export default function PracticeWorkspace() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && generate()}
-              placeholder="e.g. Balancing chemical equations"
-              className="flex-1 h-10 text-sm"
+              placeholder="e.g. Balancing chemical equations / Kinematic vectors"
+              className="flex-1 bg-zinc-900 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
             />
             <Button
               type="button"
               onClick={generate}
               disabled={loading || !topic.trim()}
-              size="lg"
-              className="shrink-0"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-5 shrink-0 gap-1.5"
             >
-              {loading ? 'Building…' : 'Build practice set'}
+              <Sparkles className="h-4 w-4" />
+              <span>{loading ? 'Building...' : 'Build Practice Set'}</span>
             </Button>
           </div>
         </div>
@@ -131,7 +144,7 @@ export default function PracticeWorkspace() {
       {error && <ErrorNote message={error} onRetry={generate} />}
 
       {loading && (
-        <div className="space-y-4 rounded-xl border border-line bg-surface p-6" aria-hidden="true">
+        <div className="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6" aria-hidden="true">
           <SkeletonLine w="30%" />
           <SkeletonBlock h="9rem" />
           <div className="flex gap-2">
@@ -150,17 +163,17 @@ export default function PracticeWorkspace() {
       )}
 
       {set && !loading && (
-        <div className="animate-rise space-y-6">
+        <div className="animate-fade space-y-6">
           {/* Tabs */}
-          <div className="flex gap-1 rounded-lg bg-sunken p-1" role="tablist">
+          <div className="flex gap-1 rounded-xl border border-zinc-800 bg-zinc-950 p-1">
             {(['flashcards', 'quiz'] as Tab[]).map((t) => (
               <button
                 key={t}
-                role="tab"
-                aria-selected={tab === t}
                 onClick={() => setTab(t)}
-                className={`flex-1 rounded-md px-3 py-2 text-sm font-medium capitalize transition-all duration-150 ${
-                  tab === t ? 'bg-surface text-ink shadow-e1' : 'text-ink-3 hover:text-ink-2'
+                className={`flex-1 rounded-lg py-2 text-xs font-semibold capitalize transition-all ${
+                  tab === t
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 {t} ({t === 'flashcards' ? set.flashcards.length : set.quiz.length})
@@ -174,60 +187,60 @@ export default function PracticeWorkspace() {
               <button
                 type="button"
                 onClick={() => setFlipped((v) => !v)}
-                className="group flex min-h-[13rem] w-full flex-col items-center justify-center gap-3 rounded-xl border border-line bg-surface px-6 py-8 text-center shadow-e2 transition-all duration-200 hover:shadow-e3"
-                aria-live="polite"
+                className="group flex min-h-[14rem] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/90 p-8 text-center shadow-2xl transition-all duration-200 hover:border-emerald-500/50"
               >
-                <span className="text-overline text-ink-3 uppercase">
-                  {flipped ? 'Answer' : 'Question'} · card {cardIndex + 1} of{' '}
-                  {set.flashcards.length}
-                </span>
-                <span
-                  className={`text-[17px] leading-relaxed ${
-                    flipped ? 'text-ink-2' : 'font-semibold text-ink'
-                  }`}
-                >
+                <Badge variant="outline" className="border-zinc-800 font-mono text-[10px] text-emerald-400 uppercase">
+                  {flipped ? 'Answer Side' : 'Question Side'} · Card {cardIndex + 1} of {set.flashcards.length}
+                </Badge>
+
+                <p className={`text-sm sm:text-base leading-relaxed max-w-lg ${flipped ? 'text-zinc-300 font-medium' : 'font-bold text-zinc-100'}`}>
                   {flipped ? card.back : card.front}
-                </span>
-                <span className="text-xs text-ink-3 opacity-0 transition-opacity group-hover:opacity-100">
-                  {flipped ? 'Tap to see the question' : 'Tap to reveal'}
+                </p>
+
+                <span className="text-[11px] font-mono text-zinc-500 group-hover:text-emerald-400 transition-colors">
+                  {flipped ? 'Click to see question' : 'Click card to flip'}
                 </span>
               </button>
 
               <div className="flex items-center justify-between gap-3">
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setCardIndex((i) => Math.max(0, i - 1));
                     setFlipped(false);
                   }}
                   disabled={cardIndex === 0}
-                  className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink disabled:opacity-40"
+                  className="border-zinc-800 bg-zinc-900 text-xs text-zinc-300 gap-1.5"
                 >
-                  ← Previous
-                </button>
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Previous</span>
+                </Button>
 
-                <div className="flex gap-1.5" aria-hidden="true">
+                <div className="flex gap-1.5">
                   {set.flashcards.map((_, i) => (
                     <span
                       key={i}
                       className={`h-1.5 rounded-full transition-all duration-200 ${
-                        i === cardIndex ? 'w-5 bg-brand' : 'w-1.5 bg-line-strong'
+                        i === cardIndex ? 'w-5 bg-emerald-500' : 'w-1.5 bg-zinc-800'
                       }`}
                     />
                   ))}
                 </div>
 
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setCardIndex((i) => Math.min(set.flashcards.length - 1, i + 1));
                     setFlipped(false);
                   }}
                   disabled={cardIndex === set.flashcards.length - 1}
-                  className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink disabled:opacity-40"
+                  className="border-zinc-800 bg-zinc-900 text-xs text-zinc-300 gap-1.5"
                 >
-                  Next →
-                </button>
+                  <span>Next</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
               </div>
             </div>
           )}
@@ -238,28 +251,28 @@ export default function PracticeWorkspace() {
               {set.quiz.map((q, qi) => {
                 const choice = picked[qi];
                 return (
-                  <fieldset
+                  <Card
                     key={qi}
-                    className="space-y-3 rounded-xl border border-line bg-surface p-5"
+                    className="space-y-3 border-zinc-800 bg-zinc-950 p-5 shadow-lg"
                   >
-                    <legend className="text-[15px] leading-relaxed font-semibold text-ink">
+                    <h4 className="text-xs sm:text-sm font-bold text-zinc-100 leading-relaxed">
                       {qi + 1}. {q.question}
-                    </legend>
+                    </h4>
 
                     <div className="space-y-2">
                       {q.options.map((opt, oi) => {
                         const isPicked = choice === oi;
                         const isRight = oi === q.answerIndex;
-                        let tone = 'border-line hover:border-line-strong';
-                        if (submitted && isRight) tone = 'border-ok bg-ok-soft';
-                        else if (submitted && isPicked && !isRight)
-                          tone = 'border-danger bg-danger-soft';
-                        else if (isPicked) tone = 'border-brand bg-brand-soft';
+                        let borderStyle = 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700 text-zinc-300';
+
+                        if (submitted && isRight) borderStyle = 'border-emerald-500 bg-emerald-950/30 text-emerald-300';
+                        else if (submitted && isPicked && !isRight) borderStyle = 'border-red-500 bg-red-950/30 text-red-300';
+                        else if (isPicked) borderStyle = 'border-emerald-500/60 bg-emerald-950/20 text-zinc-100';
 
                         return (
                           <label
                             key={oi}
-                            className={`flex cursor-pointer items-start gap-2.5 rounded-lg border px-3.5 py-2.5 text-sm transition-all ${tone}`}
+                            className={`flex cursor-pointer items-start gap-2.5 rounded-xl border px-4 py-2.5 text-xs transition-all ${borderStyle}`}
                           >
                             <input
                               type="radio"
@@ -267,13 +280,13 @@ export default function PracticeWorkspace() {
                               checked={isPicked}
                               disabled={submitted}
                               onChange={() => setPicked((p) => ({ ...p, [qi]: oi }))}
-                              className="mt-0.5 accent-brand"
+                              className="mt-0.5 accent-emerald-500"
                             />
-                            <span className="text-ink-2">{opt}</span>
+                            <span className="flex-1">{opt}</span>
                             {submitted && isRight && (
-                              <span className="ml-auto shrink-0 text-xs font-semibold text-ok">
-                                correct
-                              </span>
+                              <Badge className="bg-emerald-950 text-emerald-300 border-emerald-500/30 text-[10px]">
+                                Correct
+                              </Badge>
                             )}
                           </label>
                         );
@@ -281,11 +294,12 @@ export default function PracticeWorkspace() {
                     </div>
 
                     {submitted && (
-                      <p className="animate-fade rounded-lg bg-sunken px-3.5 py-2.5 text-sm leading-relaxed text-ink-2">
+                      <p className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3.5 text-xs leading-relaxed text-zinc-300">
+                        <span className="font-bold text-emerald-400 block mb-1">Misconception Explanation:</span>
                         {q.explanation}
                       </p>
                     )}
-                  </fieldset>
+                  </Card>
                 );
               })}
 
@@ -294,22 +308,17 @@ export default function PracticeWorkspace() {
                   type="button"
                   onClick={() => setSubmitted(true)}
                   disabled={Object.keys(picked).length === 0}
-                  size="lg"
-                  className="w-full sm:w-auto"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-6 h-10 w-full sm:w-auto"
                 >
-                  Check my answers
+                  Check My Answers
                 </Button>
               ) : (
-                <div className="animate-rise flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-[15px] text-ink">
-                    You scored{' '}
-                    <span className="font-semibold text-brand">
-                      {score} / {set.quiz.length}
-                    </span>
-                    .{' '}
+                <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:flex-row sm:items-center sm:justify-between shadow-xl">
+                  <p className="text-xs sm:text-sm text-zinc-200">
+                    You scored <span className="font-bold text-emerald-400">{score} / {set.quiz.length}</span>.{' '}
                     {score === set.quiz.length
-                      ? 'Every one right — try a harder topic.'
-                      : 'Read the explanations for the ones you missed.'}
+                      ? 'Perfect score! Topic mastered.'
+                      : 'Review explanations for missed questions above.'}
                   </p>
                   <Button
                     type="button"
@@ -318,9 +327,10 @@ export default function PracticeWorkspace() {
                       setPicked({});
                       setSubmitted(false);
                     }}
-                    className="shrink-0"
+                    className="border-zinc-800 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800 gap-1.5 shrink-0"
                   >
-                    Try again
+                    <RotateCcw className="h-3.5 w-3.5 text-zinc-400" />
+                    <span>Try Again</span>
                   </Button>
                 </div>
               )}

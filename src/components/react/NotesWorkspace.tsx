@@ -13,9 +13,22 @@ import {
 } from '../../lib/curriculum';
 import type { StudyNotes } from '../../lib/types';
 import { Button } from '../ui/button';
-import { Card, CardTitle, CardDescription } from '../ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
+import {
+  BookOpen,
+  Sparkles,
+  HelpCircle,
+  Layers,
+  Bookmark,
+  Send,
+  Check,
+  FileText,
+  Sliders,
+  CheckCircle2,
+  RefreshCw
+} from 'lucide-react';
 
 interface ChatMsg {
   id: string;
@@ -32,7 +45,7 @@ function NotesSkeleton() {
         <SkeletonLine w="82%" />
       </div>
       {[0, 1, 2].map((i) => (
-        <div key={i} className="space-y-2.5 rounded-xl border border-line bg-surface p-5">
+        <div key={i} className="space-y-2.5 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
           <SkeletonLine w="38%" />
           <SkeletonLine />
           <SkeletonLine w="90%" />
@@ -188,17 +201,20 @@ export default function NotesWorkspace() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[320px_1fr] lg:items-start">
-      {/* Selection panel */}
-      <Card className="space-y-4 p-5 shadow-e1 lg:sticky lg:top-24">
+      {/* Selection Panel */}
+      <Card className="space-y-4 p-5 border-zinc-800 bg-zinc-950/90 shadow-2xl backdrop-blur-md lg:sticky lg:top-20">
         <div>
-          <CardTitle className="text-h3 text-ink">Pick your chapter</CardTitle>
-          <CardDescription className="mt-1 text-sm leading-relaxed text-ink-2">
-            Notes and the chat that follows stay anchored to this exact chapter.
+          <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-emerald-400" />
+            <span>Select Chapter</span>
+          </CardTitle>
+          <CardDescription className="mt-1 text-xs leading-relaxed text-zinc-400">
+            Flow: Class → Subject → Textbook → Chapter
           </CardDescription>
         </div>
 
         <div className="space-y-3.5">
-          <Combobox label="Class / grade" options={gradeOptions} value={grade} onChange={setGrade} />
+          <Combobox label="Class / Grade" options={gradeOptions} value={grade} onChange={setGrade} />
           <Combobox
             label="Subject"
             options={subjectOptions}
@@ -234,10 +250,10 @@ export default function NotesWorkspace() {
           type="button"
           onClick={generate}
           disabled={!ready || loading}
-          size="lg"
-          className="w-full"
+          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold h-10 gap-2"
         >
-          {loading ? 'Writing notes…' : notes ? 'Regenerate notes' : 'Generate notes'}
+          <Sparkles className="h-4 w-4" />
+          <span>{loading ? 'Writing notes...' : notes ? 'Regenerate Notes' : 'Generate Notes'}</span>
         </Button>
 
         {notes && (
@@ -245,14 +261,15 @@ export default function NotesWorkspace() {
             type="button"
             variant="outline"
             onClick={store}
-            className="w-full"
+            className="w-full border-zinc-800 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800 gap-2"
           >
-            {saved ? 'Saved to your notes ✓' : 'Save to my notes'}
+            <Bookmark className="h-4 w-4 text-emerald-400" />
+            <span>{saved ? 'Saved to Notes ✓' : 'Save to Library'}</span>
           </Button>
         )}
       </Card>
 
-      {/* Notes + chat */}
+      {/* Main Notes Document + AI Chat */}
       <div className="min-w-0 space-y-8">
         {error && <ErrorNote message={error} onRetry={notes ? undefined : generate} />}
 
@@ -267,74 +284,87 @@ export default function NotesWorkspace() {
         )}
 
         {notes && !loading && (
-          <article className="animate-rise space-y-7">
-            <header className="space-y-2">
-              <p className="text-overline text-ink-3 uppercase">
-                {[grade, subjectById(subject!)?.name, book?.name].filter(Boolean).join(' · ')}
-              </p>
-              <h2 className="text-h2 text-ink">{notes.title}</h2>
-              <p className="text-[15px] leading-relaxed text-ink-2">{notes.overview}</p>
+          <article className="animate-fade space-y-7">
+            {/* Header Breadcrumb */}
+            <header className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 shadow-xl">
+              <div className="flex flex-wrap items-center gap-2">
+                {[grade, subjectById(subject!)?.name, book?.name].filter(Boolean).map((item) => (
+                  <Badge key={item} variant="outline" className="border-zinc-800 text-zinc-300 font-mono text-[11px]">
+                    {item}
+                  </Badge>
+                ))}
+              </div>
 
-              {/* Action Pills */}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <button
-                  type="button"
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-100">{notes.title}</h2>
+              <p className="text-xs sm:text-sm leading-relaxed text-zinc-300 font-medium">{notes.overview}</p>
+
+              {/* Contextual Action Pills */}
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-zinc-800/80">
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => send(`Explain the core topic of "${notes.title}" in detail.`)}
-                  className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
+                  className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800"
                 >
-                  Explain this topic
-                </button>
-                <button
-                  type="button"
+                  Explain Topic
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => send(`Explain "${notes.title}" with a simpler real-world analogy.`)}
-                  className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
+                  className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800"
                 >
                   Simplify
-                </button>
-                <button
-                  type="button"
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => send(`Give a step-by-step example problem for "${notes.title}".`)}
-                  className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 hover:border-brand/40 hover:text-brand transition-all"
+                  className="h-8 border-zinc-800 bg-zinc-950 text-xs text-zinc-300 hover:bg-zinc-800"
                 >
-                  Give an example
-                </button>
+                  Give Example
+                </Button>
+
                 <a
                   href={`/practice?topic=${encodeURIComponent(notes.title)}&subject=${subject || ''}&grade=${grade || ''}`}
-                  className="rounded-lg border border-brand/30 bg-brand-soft px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-950/40 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-900/60 transition-all"
                 >
-                  Quiz me
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  <span>Quiz Me</span>
                 </a>
+
                 <a
                   href={`/flashcards?topic=${encodeURIComponent(notes.title)}&subject=${subject || ''}&grade=${grade || ''}`}
-                  className="rounded-lg border border-brand/30 bg-brand-soft px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-950/40 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-900/60 transition-all"
                 >
-                  Make flashcards
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>Make Flashcards</span>
                 </a>
               </div>
             </header>
 
+            {/* Note Sections */}
             {notes.sections.map((section, i) => (
-              <section
-                key={i}
-                className="space-y-3.5 rounded-xl border border-line bg-surface p-5 shadow-e1"
-              >
-                <h3 className="text-h3 text-ink">{section.heading}</h3>
+              <Card key={i} className="border-zinc-800 bg-zinc-900/40 p-5 space-y-4 shadow-lg">
+                <h3 className="text-base font-bold text-zinc-100">{section.heading}</h3>
 
                 <ul className="space-y-2">
                   {section.keyPoints.map((point, j) => (
-                    <li key={j} className="flex gap-2.5 text-[15px] leading-relaxed text-ink-2">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+                    <li key={j} className="flex gap-2.5 text-xs sm:text-sm leading-relaxed text-zinc-300">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden="true" />
                       <span>{point}</span>
                     </li>
                   ))}
                 </ul>
 
                 {section.definitions && section.definitions.length > 0 && (
-                  <dl className="space-y-2 rounded-lg bg-sunken px-3.5 py-3">
+                  <dl className="space-y-2 rounded-xl bg-zinc-950 p-4 border border-zinc-800">
                     {section.definitions.map((d) => (
                       <div key={d.term}>
-                        <dt className="text-sm font-semibold text-ink">{d.term}</dt>
-                        <dd className="text-sm leading-relaxed text-ink-2">{d.meaning}</dd>
+                        <dt className="text-xs font-bold text-emerald-400">{d.term}</dt>
+                        <dd className="text-xs leading-relaxed text-zinc-300">{d.meaning}</dd>
                       </div>
                     ))}
                   </dl>
@@ -345,7 +375,7 @@ export default function NotesWorkspace() {
                     {section.formulas.map((f, j) => (
                       <div
                         key={j}
-                        className="scroll-slim overflow-x-auto rounded-lg border border-line bg-canvas px-3.5 py-2.5"
+                        className="scroll-slim overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 p-3"
                       >
                         <Formula tex={f} />
                       </div>
@@ -354,86 +384,87 @@ export default function NotesWorkspace() {
                 )}
 
                 {section.example && (
-                  <p className="rounded-md border-l-2 border-accent bg-accent-soft px-3.5 py-2.5 text-sm leading-relaxed text-ink-2">
-                    <span className="font-semibold text-ink">Example — </span>
+                  <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-300">
+                    <span className="font-bold text-emerald-400 block mb-1">Example Walkthrough:</span>
                     {section.example}
-                  </p>
+                  </div>
                 )}
-              </section>
+              </Card>
             ))}
 
+            {/* Questions & Quick Revision Grid */}
             <div className="grid gap-5 sm:grid-cols-2">
-              <section className="space-y-2.5 rounded-xl border border-line bg-surface p-5">
-                <h3 className="text-overline text-ink-3 uppercase">Likely test questions</h3>
+              <Card className="border-zinc-800 bg-zinc-900/40 p-5 space-y-3">
+                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Likely Exam Questions</h3>
                 <ol className="space-y-2">
                   {notes.importantQuestions.map((q, i) => (
-                    <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-ink-2">
-                      <span className="font-semibold text-brand">{i + 1}.</span>
+                    <li key={i} className="flex gap-2.5 text-xs leading-relaxed text-zinc-300">
+                      <span className="font-bold text-emerald-400 font-mono">{i + 1}.</span>
                       <button
                         type="button"
                         onClick={() => send(q)}
-                        className="text-left transition-colors hover:text-brand hover:underline"
-                        title="Ask the tutor this"
+                        className="text-left transition-colors hover:text-emerald-400 hover:underline"
+                        title="Ask the tutor this question"
                       >
                         {q}
                       </button>
                     </li>
                   ))}
                 </ol>
-              </section>
+              </Card>
 
-              <section className="space-y-2.5 rounded-xl border border-line bg-surface p-5">
-                <h3 className="text-overline text-ink-3 uppercase">Quick revision</h3>
+              <Card className="border-zinc-800 bg-zinc-900/40 p-5 space-y-3">
+                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Quick Revision Key Points</h3>
                 <ul className="space-y-2">
                   {notes.quickRevision.map((q, i) => (
-                    <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-ink-2">
-                      <span className="mt-0.5 text-accent" aria-hidden="true">
-                        ✓
-                      </span>
+                    <li key={i} className="flex gap-2 text-xs leading-relaxed text-zinc-300">
+                      <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                       <span>{q}</span>
                     </li>
                   ))}
                 </ul>
-              </section>
+              </Card>
             </div>
           </article>
         )}
 
-        {/* Chapter-scoped chat */}
+        {/* Chapter-Scoped AI Chat */}
         {notes && (
-          <section className="space-y-4 rounded-xl border border-line bg-surface p-5 shadow-e1">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-h3 text-ink">Ask about this chapter</h3>
-              <span className="rounded-full bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand">
+          <Card className="border-zinc-800 bg-zinc-950/90 shadow-2xl p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-xs font-bold text-zinc-100">Ask AI Tutor About This Chapter</h3>
+              </div>
+              <Badge className="bg-emerald-950 text-emerald-300 border-emerald-500/30 font-mono text-[10px]">
                 {chapter}
-              </span>
+              </Badge>
             </div>
 
             {messages.length === 0 && (
-              <p className="text-sm leading-relaxed text-ink-2">
-                Every answer stays anchored to this chapter — tap a test question
-                above, or ask your own below.
+              <p className="text-xs leading-relaxed text-zinc-400">
+                Every answer stays anchored to this chapter — tap an exam question above or ask your own below.
               </p>
             )}
 
             {messages.length > 0 && (
-              <div className="scroll-slim max-h-[26rem] space-y-3.5 overflow-y-auto pr-1">
+              <div className="scroll-slim max-h-[26rem] space-y-3 overflow-y-auto pr-1">
                 {messages.map((m) =>
                   m.role === 'student' ? (
                     <div key={m.id} className="flex justify-end">
-                      <p className="max-w-[85%] rounded-xl rounded-br-sm bg-ink px-3.5 py-2.5 text-sm leading-relaxed text-canvas">
+                      <p className="max-w-[85%] rounded-2xl rounded-tr-sm bg-emerald-600 px-3.5 py-2.5 text-xs font-medium text-white shadow-sm">
                         {m.text}
                       </p>
                     </div>
                   ) : (
                     <div key={m.id} className="max-w-[92%]">
                       {m.text ? (
-                        <p className="rounded-xl rounded-bl-sm bg-sunken px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap text-ink">
+                        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap text-zinc-200">
                           {m.text}
-                        </p>
+                        </div>
                       ) : (
-                        <div className="rounded-xl bg-sunken px-3.5 py-2.5">
-                          <TypingDots label="Thinking" />
+                        <div className="rounded-2xl bg-zinc-900 px-4 py-3">
+                          <TypingDots label="Tutor thinking..." />
                         </div>
                       )}
                     </div>
@@ -450,25 +481,22 @@ export default function NotesWorkspace() {
               }}
               className="flex gap-2"
             >
-              <label htmlFor="notes-chat" className="sr-only">
-                Ask about {chapter}
-              </label>
-              <input
-                id="notes-chat"
+              <Input
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder={`Ask anything about ${chapter}…`}
-                className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3.5 py-2.5 text-sm outline-none transition-all placeholder:text-ink-3 focus:border-brand focus:ring-4 focus:ring-brand-ring"
+                placeholder={`Ask anything about ${chapter}...`}
+                className="bg-zinc-900 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={replying || !draft.trim()}
-                className="shrink-0 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-hover active:translate-y-px disabled:opacity-45"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 h-9 gap-1.5 shrink-0"
               >
-                Ask
-              </button>
+                <span>Ask</span>
+                <Send className="h-3.5 w-3.5" />
+              </Button>
             </form>
-          </section>
+          </Card>
         )}
       </div>
     </div>

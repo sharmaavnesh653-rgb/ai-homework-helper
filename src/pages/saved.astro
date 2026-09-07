@@ -1,21 +1,27 @@
 ---
 import Site from '../layouts/Site.astro';
-import PageHeader from '../components/PageHeader.astro';
 import { SavedNotesList } from '../components/react/Library';
+import { Bookmark } from 'lucide-react';
 ---
 
 <Site
-  title="Saved work — Stepwise"
-  description="Every walkthrough and chapter of notes you saved, stored on this device."
+  title="Saved Work Library — Stepwise AI"
+  description="Every walkthrough and chapter of notes you saved, stored locally on your device."
 >
-  <PageHeader
-    width="medium"
-    overline="Saved work"
-    title="Your notes"
-    lede="Anything you saved from a walkthrough or a chapter of study notes. Stored on this device — nothing is uploaded."
-  />
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
+    <div class="space-y-2 border-b border-zinc-800 pb-6">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 font-mono text-xs font-semibold text-emerald-300">
+          <Bookmark class="h-3.5 w-3.5" />
+          <span>Library</span>
+        </span>
+        <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-zinc-100">Saved Work & Notes</h1>
+      </div>
+      <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        Your collection of saved solutions, chapter revision notes, flashcards, and visual concept maps.
+      </p>
+    </div>
 
-  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
     <SavedNotesList client:load />
   </div>
 </Site>

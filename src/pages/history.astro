@@ -1,21 +1,27 @@
 ---
 import Site from '../layouts/Site.astro';
-import PageHeader from '../components/PageHeader.astro';
 import { HistoryList } from '../components/react/Library';
+import { Clock } from 'lucide-react';
 ---
 
 <Site
-  title="Study history — Stepwise"
+  title="Study Session History — Stepwise AI"
   description="Every question you've asked, so you can pick up where you left off."
 >
-  <PageHeader
-    width="medium"
-    overline="Study history"
-    title="What you've been working on"
-    lede="Every question you ask is logged here on this device. Use “Ask again” to reopen one in the solver."
-  />
+  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
+    <div class="space-y-2 border-b border-zinc-800 pb-6">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 font-mono text-xs font-semibold text-emerald-300">
+          <Clock class="h-3.5 w-3.5" />
+          <span>Study History</span>
+        </span>
+        <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight text-zinc-100">Past Homework Sessions</h1>
+      </div>
+      <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        Every question you ask is logged here locally. Use "Ask again" to reopen any question straight in the solver.
+      </p>
+    </div>
 
-  <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
     <HistoryList client:load />
   </div>
 </Site>

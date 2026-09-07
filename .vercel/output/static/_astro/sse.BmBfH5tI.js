@@ -1,0 +1,5 @@
+async function e(e,t,n){let r=await fetch(`/api/chat`,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify(e),signal:n});if(!r.ok||!r.body){let e=`Request failed (${r.status}).`;try{let t=await r.json();t?.error&&(e=t.error)}catch{}t.onError?.(e),t.onDone?.(`error`);return}let i=r.body.getReader(),a=new TextDecoder,o=``;for(;;){let{done:e,value:n}=await i.read();if(e)break;o+=a.decode(n,{stream:!0});let r;for(;(r=o.indexOf(`
+
+`))!==-1;){let e=o.slice(0,r);o=o.slice(r+2);let n=`message`,i=[];for(let t of e.split(`
+`))t.startsWith(`event: `)?n=t.slice(7).trim():t.startsWith(`data: `)&&i.push(t.slice(6));if(!i.length)continue;let a;try{a=JSON.parse(i.join(`
+`))}catch{continue}n===`delta`&&typeof a.text==`string`?t.onDelta(a.text):n===`error`&&typeof a.message==`string`?t.onError?.(a.message):n===`done`&&t.onDone?.(a.stopReason??null)}}}async function t(e,t){let n=await fetch(e,{method:`POST`,headers:{"Content-Type":`application/json`},body:JSON.stringify(t)}),r=await n.text(),i=null;try{i=r?JSON.parse(r):null}catch{}if(!n.ok){let e=i?.error??`Request failed (${n.status}).`;throw Error(e)}return i}export{e as n,t};

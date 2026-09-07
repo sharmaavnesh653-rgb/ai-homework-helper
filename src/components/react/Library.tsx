@@ -3,6 +3,19 @@ import { EmptyState } from './States';
 import { clearHistory, deleteNote, getHistory, getNotes } from '../../lib/storage';
 import { subjectById } from '../../lib/curriculum';
 import { MODES, type HistoryEntry, type SavedNote } from '../../lib/types';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import {
+  Bookmark,
+  Clock,
+  Trash2,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  BookOpen
+} from 'lucide-react';
 
 function when(at: number): string {
   const mins = Math.round((Date.now() - at) / 60000);
@@ -19,17 +32,9 @@ function SubjectTag({ subject }: { subject?: string | null }) {
   const s = subjectById(subject);
   if (!s) return null;
   return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full border border-line px-2 py-0.5 text-xs text-ink-2"
-      style={{ borderColor: `var(--color-${s.hue})` }}
-    >
-      <span
-        className="h-1.5 w-1.5 rounded-full"
-        style={{ background: `var(--color-${s.hue})` }}
-        aria-hidden="true"
-      />
+    <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 font-mono text-[10px] bg-emerald-950/30">
       {s.name}
-    </span>
+    </Badge>
   );
 }
 
@@ -37,7 +42,6 @@ export function SavedNotesList() {
   const [notes, setNotes] = useState<SavedNote[] | null>(null);
   const [open, setOpen] = useState<string | null>(null);
 
-  // Read after mount: localStorage isn't available during SSR.
   useEffect(() => setNotes(getNotes()), []);
 
   if (notes === null) return null;
@@ -51,9 +55,10 @@ export function SavedNotesList() {
       >
         <a
           href="/solve"
-          className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-emerald-500 transition-all"
         >
-          Solve something first
+          <Sparkles className="h-4 w-4" />
+          <span>Solve something first</span>
         </a>
       </EmptyState>
     );
@@ -69,16 +74,16 @@ export function SavedNotesList() {
       {notes.map((note) => {
         const isOpen = open === note.id;
         return (
-          <li
+          <Card
             key={note.id}
-            className="animate-fade overflow-hidden rounded-xl border border-line bg-surface shadow-e1"
+            className="animate-fade overflow-hidden border-zinc-800 bg-zinc-950 shadow-xl space-y-0"
           >
-            <div className="flex items-start gap-3 p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-3 p-4 sm:p-5">
               <div className="min-w-0 flex-1 space-y-2">
-                <h3 className="text-[15px] leading-snug font-semibold text-ink">
+                <h3 className="text-sm font-bold text-zinc-100 leading-snug">
                   {note.title}
                 </h3>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono">
                   <SubjectTag subject={note.subject} />
                   {note.chapter && <span>{note.chapter}</span>}
                   {note.grade && <span>· {note.grade}</span>}
@@ -86,31 +91,33 @@ export function SavedNotesList() {
                 </div>
               </div>
               <div className="flex shrink-0 gap-1.5">
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setOpen(isOpen ? null : note.id)}
-                  aria-expanded={isOpen}
-                  className="rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+                  className="h-8 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800 gap-1"
                 >
-                  {isOpen ? 'Hide' : 'Open'}
-                </button>
-                <button
-                  type="button"
+                  <span>{isOpen ? 'Collapse' : 'Expand'}</span>
+                  {isOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => remove(note.id)}
-                  aria-label={`Delete ${note.title}`}
-                  className="rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-ink-3 transition-colors hover:border-danger/40 hover:text-danger"
+                  className="h-8 text-xs text-zinc-500 hover:text-red-400 hover:bg-zinc-900 px-2"
                 >
-                  Delete
-                </button>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
 
             {isOpen && (
-              <pre className="animate-fade scroll-slim max-h-96 overflow-auto border-t border-line bg-sunken px-4 py-4 text-sm leading-relaxed whitespace-pre-wrap text-ink-2 sm:px-5">
+              <pre className="animate-fade scroll-slim max-h-96 overflow-auto border-t border-zinc-800 bg-zinc-900/60 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-zinc-300">
                 {note.body}
               </pre>
             )}
-          </li>
+          </Card>
         );
       })}
     </ul>
@@ -133,9 +140,10 @@ export function HistoryList() {
       >
         <a
           href="/solve"
-          className="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-emerald-500 transition-all"
         >
-          Ask your first question
+          <Sparkles className="h-4 w-4" />
+          <span>Ask your first question</span>
         </a>
       </EmptyState>
     );
@@ -144,43 +152,47 @@ export function HistoryList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-2">
-          {entries.length} question{entries.length === 1 ? '' : 's'}, most recent first
+        <p className="text-xs font-mono text-zinc-400">
+          {entries.length} question{entries.length === 1 ? '' : 's'} logged
         </p>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => {
             clearHistory();
             setEntries([]);
           }}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-medium text-ink-3 transition-colors hover:border-danger/40 hover:text-danger"
+          className="h-8 border-zinc-800 bg-zinc-950 text-xs text-red-400 hover:bg-zinc-900 gap-1.5"
         >
-          Clear history
-        </button>
+          <Trash2 className="h-3.5 w-3.5" />
+          <span>Clear History</span>
+        </Button>
       </div>
 
-      <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+      <Card className="divide-y divide-zinc-800 overflow-hidden border-zinc-800 bg-zinc-950 p-0 shadow-xl">
         {entries.map((e) => (
-          <li key={e.id} className="flex items-start gap-3 p-4">
+          <div key={e.id} className="flex items-start justify-between gap-3 p-4 hover:bg-zinc-900/40 transition-colors">
             <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="line-clamp-2 text-sm leading-relaxed text-ink">{e.question}</p>
-              <div className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
+              <p className="line-clamp-2 text-xs sm:text-sm leading-relaxed text-zinc-200 font-medium">{e.question}</p>
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-zinc-400">
                 <SubjectTag subject={e.subject} />
-                <span className="rounded bg-sunken px-1.5 py-0.5">
+                <Badge variant="outline" className="border-zinc-800 text-zinc-400 text-[10px]">
                   {MODES.find((m) => m.id === e.mode)?.short ?? e.mode}
-                </span>
+                </Badge>
                 <span>· {when(e.at)}</span>
               </div>
             </div>
+
             <a
-              href={`/solve?q=${encodeURIComponent(e.question)}`}
-              className="shrink-0 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-ink-2 transition-colors hover:border-brand/40 hover:text-brand"
+              href={`/solve?question=${encodeURIComponent(e.question)}&subject=${e.subject || ''}`}
+              className="inline-flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-zinc-800 hover:text-emerald-300 transition-all shrink-0"
             >
-              Ask again
+              <span>Ask Again</span>
+              <ExternalLink className="h-3 w-3" />
             </a>
-          </li>
+          </div>
         ))}
-      </ul>
+      </Card>
     </div>
   );
 }

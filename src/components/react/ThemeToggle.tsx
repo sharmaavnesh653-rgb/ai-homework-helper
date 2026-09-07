@@ -1,27 +1,41 @@
-import { useState } from 'react';
-import { setTheme, type Theme } from '../../lib/storage';
+import { useState, useEffect } from 'react';
+import { setTheme, getTheme, type Theme } from '../../lib/storage';
+import { Sun, Moon } from 'lucide-react';
 
-/**
- * Light/dark toggle. The `dark` class is applied by an inline script in the
- * document head before first paint, so we read the resolved theme off the
- * element rather than re-deriving it — that way the correct icon is drawn on
- * the very first client render with no flash or empty state.
- */
 export default function ThemeToggle() {
-  const [theme, setLocal] = useState<Theme>(() =>
-    typeof document !== 'undefined' &&
-    document.documentElement.classList.contains('dark')
-      ? 'dark'
-      : 'light',
-  );
+  const [theme, setLocal] = useState<Theme>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const initial =
+      getTheme() ||
+      (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    setLocal(initial);
+  }, []);
 
   const flip = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setLocal(next);
-    setTheme(next);
+
+    // Use View Transitions API if supported for ultra-smooth morph animation
+    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+      (document as any).startViewTransition(() => {
+        setLocal(next);
+        setTheme(next);
+      });
+    } else {
+      setLocal(next);
+      setTheme(next);
+    }
   };
 
   const label = `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`;
+
+  if (!mounted) {
+    return (
+      <div className="h-9 w-9 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900" />
+    );
+  }
 
   return (
     <button
@@ -29,29 +43,12 @@ export default function ThemeToggle() {
       onClick={flip}
       aria-label={label}
       title={label}
-      className="grid h-9 w-9 place-items-center rounded-lg border border-line text-ink-2 transition-all duration-150 hover:border-line-strong hover:text-ink"
+      className="relative grid h-9 w-9 place-items-center rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition-all duration-300 hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 active:scale-95 shadow-sm"
     >
       {theme === 'dark' ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.5" fill="currentColor" />
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-            <line
-              key={deg}
-              x1="12"
-              y1="2.5"
-              x2="12"
-              y2="5"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              transform={`rotate(${deg} 12 12)`}
-            />
-          ))}
-        </svg>
+        <Sun className="h-4 w-4 text-amber-400 transition-transform duration-300 rotate-0 hover:rotate-90" />
       ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor" />
-        </svg>
+        <Moon className="h-4 w-4 text-indigo-600 transition-transform duration-300 rotate-0 hover:-rotate-12" />
       )}
     </button>
   );

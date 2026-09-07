@@ -94,7 +94,13 @@ export function setTheme(theme: Theme): void {
   } catch {
     /* ignore */
   }
-  document.documentElement.classList.toggle('dark', theme === 'dark');
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.add('theme-transitioning');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 450);
+  }
 }
 
 export { THEME_KEY };

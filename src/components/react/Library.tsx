@@ -32,7 +32,7 @@ function SubjectTag({ subject }: { subject?: string | null }) {
   const s = subjectById(subject);
   if (!s) return null;
   return (
-    <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 font-mono text-[10px] bg-emerald-950/30">
+    <Badge variant="outline" className="border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-[10px] bg-emerald-100 dark:bg-emerald-950/30">
       {s.name}
     </Badge>
   );
@@ -76,14 +76,14 @@ export function SavedNotesList() {
         return (
           <Card
             key={note.id}
-            className="animate-fade overflow-hidden border-zinc-800 bg-zinc-950 shadow-xl space-y-0"
+            className="animate-fade overflow-hidden border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl space-y-0"
           >
             <div className="flex items-start justify-between gap-3 p-4 sm:p-5">
               <div className="min-w-0 flex-1 space-y-2">
-                <h3 className="text-sm font-bold text-zinc-100 leading-snug">
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
                   {note.title}
                 </h3>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 font-mono">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 font-mono">
                   <SubjectTag subject={note.subject} />
                   {note.chapter && <span>{note.chapter}</span>}
                   {note.grade && <span>· {note.grade}</span>}
@@ -95,7 +95,7 @@ export function SavedNotesList() {
                   variant="outline"
                   size="sm"
                   onClick={() => setOpen(isOpen ? null : note.id)}
-                  className="h-8 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800 gap-1"
+                  className="h-8 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 gap-1"
                 >
                   <span>{isOpen ? 'Collapse' : 'Expand'}</span>
                   {isOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -105,7 +105,7 @@ export function SavedNotesList() {
                   variant="ghost"
                   size="sm"
                   onClick={() => remove(note.id)}
-                  className="h-8 text-xs text-zinc-500 hover:text-red-400 hover:bg-zinc-900 px-2"
+                  className="h-8 text-xs text-zinc-500 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 px-2"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -113,7 +113,7 @@ export function SavedNotesList() {
             </div>
 
             {isOpen && (
-              <pre className="animate-fade scroll-slim max-h-96 overflow-auto border-t border-zinc-800 bg-zinc-900/60 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-zinc-300">
+              <pre className="animate-fade scroll-slim max-h-96 overflow-auto border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
                 {note.body}
               </pre>
             )}
@@ -152,7 +152,7 @@ export function HistoryList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-mono text-zinc-400">
+        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
           {entries.length} question{entries.length === 1 ? '' : 's'} logged
         </p>
         <Button
@@ -162,21 +162,21 @@ export function HistoryList() {
             clearHistory();
             setEntries([]);
           }}
-          className="h-8 border-zinc-800 bg-zinc-950 text-xs text-red-400 hover:bg-zinc-900 gap-1.5"
+          className="h-8 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 text-xs text-red-500 dark:text-red-400 hover:bg-zinc-200 dark:hover:bg-zinc-900 gap-1.5"
         >
           <Trash2 className="h-3.5 w-3.5" />
           <span>Clear History</span>
         </Button>
       </div>
 
-      <Card className="divide-y divide-zinc-800 overflow-hidden border-zinc-800 bg-zinc-950 p-0 shadow-xl">
+      <Card className="divide-y divide-zinc-200 dark:divide-zinc-800 overflow-hidden border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-0 shadow-xl">
         {entries.map((e) => (
-          <div key={e.id} className="flex items-start justify-between gap-3 p-4 hover:bg-zinc-900/40 transition-colors">
+          <div key={e.id} className="flex items-start justify-between gap-3 p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors">
             <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="line-clamp-2 text-xs sm:text-sm leading-relaxed text-zinc-200 font-medium">{e.question}</p>
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-zinc-400">
+              <p className="line-clamp-2 text-xs sm:text-sm leading-relaxed text-zinc-800 dark:text-zinc-200 font-medium">{e.question}</p>
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
                 <SubjectTag subject={e.subject} />
-                <Badge variant="outline" className="border-zinc-800 text-zinc-400 text-[10px]">
+                <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-[10px]">
                   {MODES.find((m) => m.id === e.mode)?.short ?? e.mode}
                 </Badge>
                 <span>· {when(e.at)}</span>
@@ -185,7 +185,7 @@ export function HistoryList() {
 
             <a
               href={`/solve?question=${encodeURIComponent(e.question)}&subject=${e.subject || ''}`}
-              className="inline-flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-zinc-800 hover:text-emerald-300 transition-all shrink-0"
+              className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all shrink-0"
             >
               <span>Ask Again</span>
               <ExternalLink className="h-3 w-3" />

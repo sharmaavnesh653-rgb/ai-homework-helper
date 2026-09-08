@@ -205,31 +205,31 @@ export default function NoteGPTWorkspace() {
   );
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans antialiased selection:bg-emerald-500/30">
       
       {/* TOP HEADER / NAVBAR */}
-      <header className="flex h-14 w-full shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/80 px-4 sm:px-6 backdrop-blur-md z-30">
+      <header className="flex h-14 w-full shrink-0 items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-4 sm:px-6 backdrop-blur-md z-30">
         <div className="flex items-center gap-3">
           <a href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-600 font-extrabold text-white shadow-sm">
               S
             </span>
-            <span className="text-sm font-extrabold tracking-tight text-zinc-100 hidden sm:inline-block">
-              Stepwise <span className="text-xs font-normal text-zinc-400">Studio</span>
+            <span className="text-sm font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 hidden sm:inline-block">
+              Stepwise <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">Studio</span>
             </span>
           </a>
 
-          <div className="h-4 w-px bg-zinc-800 hidden sm:block" />
+          <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
 
           {/* Project Title Badge */}
-          <div className="flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-xs font-medium text-zinc-200">
+          <div className="flex items-center gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 px-2.5 py-1 text-xs font-medium text-zinc-800 dark:text-zinc-200">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="max-w-[160px] truncate sm:max-w-[240px]">Physics 101: Kinematics & Vectors</span>
           </div>
         </div>
 
         {/* Center: Action Switchers */}
-        <div className="hidden md:flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
+        <div className="hidden md:flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-1">
           {[
             { id: 'summary', label: 'Summary', icon: BookOpen },
             { id: 'flashcards', label: 'Flashcards', icon: Layers },
@@ -245,8 +245,8 @@ export default function NoteGPTWorkspace() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold transition-all ${
                   activeTab === item.id
-                    ? 'bg-zinc-800 text-emerald-400 shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                    ? 'bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-900'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -262,9 +262,9 @@ export default function NoteGPTWorkspace() {
             variant="outline"
             size="sm"
             onClick={handleSaveNotes}
-            className="h-8 gap-1.5 border-zinc-800 bg-zinc-900 text-xs font-semibold text-zinc-200 hover:bg-zinc-800"
+            className="h-8 gap-1.5 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-800"
           >
-            <Download className="h-3.5 w-3.5 text-emerald-400" />
+            <Download className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Export Notes</span>
           </Button>
 
@@ -274,7 +274,7 @@ export default function NoteGPTWorkspace() {
 
       {/* Toast Notification */}
       {noteSavedToast && (
-        <div className="absolute top-16 right-6 z-50 animate-bounce rounded-lg border border-emerald-500/30 bg-emerald-950 px-4 py-2 text-xs font-semibold text-emerald-200 shadow-lg">
+        <div className="absolute top-16 right-6 z-50 animate-bounce rounded-lg border border-emerald-500/30 bg-emerald-100 dark:bg-emerald-950 px-4 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-200 shadow-lg">
           ✓ Notes saved to local workspace
         </div>
       )}
@@ -283,11 +283,11 @@ export default function NoteGPTWorkspace() {
       <main className="flex flex-1 overflow-hidden">
         
         {/* LEFT PANEL: MEDIA & SOURCE WORKSPACE (42% Width) */}
-        <section className="flex flex-col border-r border-zinc-800 bg-zinc-950/60 w-full lg:w-[42%] shrink-0 overflow-hidden">
+        <section className="flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/60 w-full lg:w-[42%] shrink-0 overflow-hidden">
           
           {/* Header Tab Bar */}
-          <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/60 px-4 py-2">
-            <div className="flex gap-1 rounded-md bg-zinc-950 p-1 border border-zinc-800/60">
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/60 px-4 py-2">
+            <div className="flex gap-1 rounded-md bg-zinc-100 dark:bg-zinc-950 p-1 border border-zinc-200 dark:border-zinc-800/60">
               {[
                 { id: 'media', label: 'Video Player' },
                 { id: 'transcript', label: 'Transcript' },
@@ -299,8 +299,8 @@ export default function NoteGPTWorkspace() {
                   onClick={() => setLeftTab(tab.id as any)}
                   className={`rounded px-2.5 py-1 text-xs font-medium transition-all ${
                     leftTab === tab.id
-                      ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-white dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-sm'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                   }`}
                 >
                   {tab.label}
@@ -308,7 +308,7 @@ export default function NoteGPTWorkspace() {
               ))}
             </div>
 
-            <span className="text-[11px] font-mono text-zinc-400">1080p HD</span>
+            <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400">1080p HD</span>
           </div>
 
           {/* Left Main Content */}
@@ -317,7 +317,7 @@ export default function NoteGPTWorkspace() {
             {leftTab === 'media' && (
               <div className="space-y-4">
                 {/* YouTube Video Player Embed */}
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-zinc-800 bg-black shadow-lg">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-black shadow-lg">
                   <iframe
                     src={`https://www.youtube-nocookie.com/embed/gT8E6Mmsv4U?start=${currentTime}&autoplay=0`}
                     title="Physics Kinematics Lecture"
@@ -328,7 +328,7 @@ export default function NoteGPTWorkspace() {
                 </div>
 
                 {/* Custom Interactive Audio Sync Controller */}
-                <Card className="border-zinc-800 bg-zinc-900/80 p-4 space-y-3">
+                <Card className="border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/80 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Button
@@ -341,15 +341,15 @@ export default function NoteGPTWorkspace() {
                       </Button>
 
                       <div>
-                        <p className="text-xs font-semibold text-zinc-100">MIT 8.01 Kinematics Audio</p>
-                        <p className="text-[11px] font-mono text-zinc-400">
+                        <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">MIT 8.01 Kinematics Audio</p>
+                        <p className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
                           {formatTime(currentTime)} / {formatTime(duration)}
                         </p>
                       </div>
                     </div>
 
                     {/* Playback speed toggle */}
-                    <div className="flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-950 p-0.5">
+                    <div className="flex items-center gap-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-0.5">
                       {[1, 1.25, 1.5, 2].map((spd) => (
                         <button
                           key={spd}
@@ -358,7 +358,7 @@ export default function NoteGPTWorkspace() {
                           className={`rounded px-1.5 py-0.5 text-[10px] font-mono font-semibold transition-all ${
                             playbackSpeed === spd
                               ? 'bg-emerald-600 text-white'
-                              : 'text-zinc-400 hover:text-zinc-200'
+                              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                           }`}
                         >
                           {spd}x
@@ -375,7 +375,7 @@ export default function NoteGPTWorkspace() {
                       max={duration}
                       value={currentTime}
                       onChange={(e) => setCurrentTime(Number(e.target.value))}
-                      className="w-full h-1.5 accent-emerald-500 bg-zinc-800 rounded-lg cursor-pointer"
+                      className="w-full h-1.5 accent-emerald-500 bg-zinc-200 dark:bg-zinc-800 rounded-lg cursor-pointer"
                     />
                   </div>
                 </Card>
@@ -384,7 +384,7 @@ export default function NoteGPTWorkspace() {
 
             {leftTab === 'transcript' && (
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-400 border-b border-zinc-800 pb-2 px-1">
+                <div className="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800 pb-2 px-1">
                   <span>Interactive Timestamps</span>
                   <span>Click line to jump</span>
                 </div>
@@ -395,18 +395,18 @@ export default function NoteGPTWorkspace() {
                       onClick={() => handleTimestampClick(t.seconds)}
                       className={`group flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-all ${
                         currentTime >= t.seconds && currentTime < t.seconds + 90
-                          ? 'border-emerald-500/50 bg-emerald-950/20 text-emerald-200'
-                          : 'border-zinc-800/60 bg-zinc-900/40 hover:border-zinc-700 hover:bg-zinc-900'
+                          ? 'border-emerald-500/50 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-200'
+                          : 'border-zinc-200 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-900/40 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-900'
                       }`}
                     >
-                      <Badge variant="outline" className="font-mono text-emerald-400 border-emerald-500/30 shrink-0">
+                      <Badge variant="outline" className="font-mono text-emerald-600 dark:text-emerald-400 border-emerald-500/30 shrink-0">
                         {t.time}
                       </Badge>
                       <div>
-                        <h5 className="text-xs font-bold text-zinc-200 group-hover:text-emerald-400 transition-colors">
+                        <h5 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                           {t.label}
                         </h5>
-                        <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">{t.snippet}</p>
+                        <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">{t.snippet}</p>
                       </div>
                     </div>
                   ))}
@@ -415,12 +415,12 @@ export default function NoteGPTWorkspace() {
             )}
 
             {leftTab === 'file' && (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/40 p-8 text-center space-y-3">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-950/60 text-emerald-400 font-bold border border-emerald-500/20">
+              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/40 p-8 text-center space-y-3">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">
                   <FileText className="h-6 w-6" />
                 </div>
-                <h4 className="text-xs font-bold text-zinc-200">Lecture Slides / Textbook PDF Attached</h4>
-                <p className="text-[11px] text-zinc-400 max-w-xs leading-relaxed">
+                <h4 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Lecture Slides / Textbook PDF Attached</h4>
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 max-w-xs leading-relaxed">
                   Physics_Chapter_2_Kinematics.pdf (4.2 MB) · Analyzed by Stepwise Engine.
                 </p>
               </div>
@@ -428,8 +428,8 @@ export default function NoteGPTWorkspace() {
           </div>
 
           {/* Left Bottom Quick Jump Bar */}
-          <div className="border-t border-zinc-800 bg-zinc-900/80 p-3 space-y-1.5 shrink-0">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+          <div className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/80 p-3 space-y-1.5 shrink-0">
+            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
               Key Video Timestamps
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -440,8 +440,8 @@ export default function NoteGPTWorkspace() {
                   onClick={() => handleTimestampClick(t.seconds)}
                   className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[11px] font-mono font-medium transition-all ${
                     currentTime === t.seconds
-                      ? 'border-emerald-500 bg-emerald-900/40 text-emerald-300'
-                      : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
+                      ? 'border-emerald-500 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-200'
                   }`}
                 >
                   <span>▶ {t.time}</span>
@@ -453,10 +453,10 @@ export default function NoteGPTWorkspace() {
         </section>
 
         {/* RIGHT PANEL: AI TOOLS & WORKSPACE (58% Width) */}
-        <section className="flex flex-col flex-1 bg-zinc-950 overflow-hidden">
+        <section className="flex flex-col flex-1 bg-white dark:bg-zinc-950 overflow-hidden">
           
           {/* Main Action Tabs Bar */}
-          <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-4 py-2 gap-2 shrink-0 z-10">
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/90 px-4 py-2 gap-2 shrink-0 z-10">
             <div className="flex gap-1 overflow-x-auto scroll-slim">
               {[
                 { id: 'summary', label: 'Summary' },
@@ -474,7 +474,7 @@ export default function NoteGPTWorkspace() {
                   className={`rounded-md px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
                     activeTab === tab.id
                       ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-800'
                   }`}
                 >
                   {tab.label}

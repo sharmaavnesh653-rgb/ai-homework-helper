@@ -234,8 +234,8 @@ export default function Composer({
       {/* Input Route Hints */}
       {showInputHints && (
         <div className="flex flex-wrap items-center gap-2">
-          <Badge className="bg-emerald-950/80 text-emerald-300 border-emerald-500/30 gap-1 px-3 py-1 text-xs">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+          <Badge className="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 gap-1 px-3 py-1 text-xs">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Type or paste text</span>
           </Badge>
 
@@ -243,9 +243,9 @@ export default function Composer({
             variant="outline"
             size="sm"
             onClick={() => fileInput.current?.click()}
-            className="h-8 gap-1.5 border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+            className="h-8 gap-1.5 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/60 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            <ImageIcon className="h-3.5 w-3.5 text-blue-400" />
+            <ImageIcon className="h-3.5 w-3.5 text-blue-500 dark:text-blue-400" />
             <span>Photo of page</span>
           </Button>
 
@@ -253,9 +253,9 @@ export default function Composer({
             variant="outline"
             size="sm"
             onClick={() => fileInput.current?.click()}
-            className="h-8 gap-1.5 border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+            className="h-8 gap-1.5 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/60 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            <FileText className="h-3.5 w-3.5 text-purple-400" />
+            <FileText className="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
             <span>PDF worksheet</span>
           </Button>
         </div>
@@ -273,7 +273,7 @@ export default function Composer({
           setDragging(false);
           addFiles(e.dataTransfer.files);
         }}
-        className={`border-zinc-800 bg-zinc-900/90 shadow-2xl backdrop-blur-md transition-all duration-200 ${
+        className={`border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-2xl backdrop-blur-md transition-all duration-200 ${
           dragging ? 'border-emerald-500 ring-2 ring-emerald-500/30' : 'focus-within:border-emerald-500/50'
         }`}
       >
@@ -300,31 +300,31 @@ export default function Composer({
             rows={4}
             maxLength={MAX_QUESTION_LENGTH}
             placeholder="Type or paste your question — or drop a photo/PDF problem here..."
-            className="w-full border-0 bg-transparent p-0 text-sm text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-0 shadow-none resize-y min-h-[100px]"
+            className="w-full border-0 bg-transparent p-0 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:ring-0 shadow-none resize-y min-h-[100px]"
           />
 
           {/* Attachments Tray */}
           {files.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2 border-t border-zinc-800/80">
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800/80">
               {files.map((f) => (
                 <div
                   key={f.id}
-                  className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 p-1.5 text-xs text-zinc-200"
+                  className="flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-1.5 text-xs text-zinc-800 dark:text-zinc-200"
                 >
                   {f.previewUrl ? (
                     <img src={f.previewUrl} alt="" className="h-8 w-8 rounded object-cover" />
                   ) : (
-                    <div className="grid h-8 w-8 place-items-center rounded bg-zinc-900 text-[10px] font-mono font-bold text-emerald-400">
+                    <div className="grid h-8 w-8 place-items-center rounded bg-zinc-200 dark:bg-zinc-900 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
                       PDF
                     </div>
                   )}
 
                   <div className="max-w-[120px]">
-                    <span className="block truncate font-medium text-zinc-200">{f.name}</span>
+                    <span className="block truncate font-medium text-zinc-800 dark:text-zinc-200">{f.name}</span>
                     <span className="block text-[10px] text-zinc-500 font-mono">
                       {f.status === 'ready' && humanSize(f.size)}
                       {f.status === 'reading' && 'Reading...'}
-                      {f.status === 'error' && <span className="text-red-400">{f.error}</span>}
+                      {f.status === 'error' && <span className="text-red-500">{f.error}</span>}
                     </span>
                   </div>
 
@@ -332,7 +332,7 @@ export default function Composer({
                     size="icon"
                     variant="ghost"
                     onClick={() => removeFile(f.id)}
-                    className="h-6 w-6 text-zinc-400 hover:text-red-400 hover:bg-zinc-900 rounded-full ml-1"
+                    className="h-6 w-6 text-zinc-500 dark:text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full ml-1"
                   >
                     <X className="h-3.5 w-3.5" />
                   </Button>
@@ -342,7 +342,7 @@ export default function Composer({
           )}
         </CardContent>
 
-        <CardFooter className="flex flex-wrap items-center justify-between border-t border-zinc-800/80 bg-zinc-950/60 px-4 py-3 gap-3">
+        <CardFooter className="flex flex-wrap items-center justify-between border-t border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-950/60 px-4 py-3 gap-3">
           <div className="flex items-center gap-2">
             <input
               ref={fileInput}
@@ -361,14 +361,14 @@ export default function Composer({
               variant="outline"
               size="sm"
               onClick={() => fileInput.current?.click()}
-              className="h-8 gap-1.5 border-zinc-800 bg-zinc-900 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white"
+              className="h-8 gap-1.5 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white"
             >
-              <Paperclip className="h-3.5 w-3.5 text-emerald-400" />
+              <Paperclip className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Attach File</span>
             </Button>
 
             {/* Mode selection tabs */}
-            <div className="flex gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
+            <div className="flex gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-1">
               {MODES.map((m) => (
                 <button
                   key={m.id}
@@ -376,8 +376,8 @@ export default function Composer({
                   onClick={() => setMode(m.id)}
                   className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-all ${
                     mode === m.id
-                      ? 'bg-zinc-800 text-emerald-400 shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-white dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 shadow-sm'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                   }`}
                   title={m.blurb}
                 >

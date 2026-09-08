@@ -228,19 +228,19 @@ export default function SolveWorkspace() {
   return (
     <div className="space-y-6">
       {/* Context Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-4">
         <div className="flex items-center gap-2">
-          <Badge className="bg-emerald-950 text-emerald-400 border-emerald-500/30 gap-1.5 px-3 py-1 font-mono text-xs">
+          <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1.5 px-3 py-1 font-mono text-xs">
             <Sparkles className="h-3.5 w-3.5" />
             <span>{subject ? subjectById(subject)?.name : 'All Subjects'}</span>
           </Badge>
           {grade && (
-            <Badge variant="outline" className="border-zinc-800 text-zinc-300 text-xs font-mono">
+            <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono">
               {grade}
             </Badge>
           )}
           {isSolved && (
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono hidden sm:inline">
               · Solution Ready
             </span>
           )}
@@ -251,9 +251,9 @@ export default function SolveWorkspace() {
             variant="outline"
             size="sm"
             onClick={() => setFormulaModalOpen(true)}
-            className="h-8 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+            className="h-8 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 gap-1.5"
           >
-            <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
+            <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Formula Sheet</span>
           </Button>
 
@@ -262,7 +262,7 @@ export default function SolveWorkspace() {
               variant="outline"
               size="sm"
               onClick={reset}
-              className="h-8 border-zinc-800 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800 gap-1.5"
+              className="h-8 border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 gap-1.5"
             >
               <RotateCcw className="h-3.5 w-3.5 text-zinc-400" />
               <span>New Question</span>
@@ -348,10 +348,10 @@ export default function SolveWorkspace() {
             <div className={`space-y-6 ${mobileTab === 'chat' ? 'hidden lg:block' : 'block'}`}>
               {/* Question Header Card */}
               {firstQuestion && (
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 text-zinc-100 shadow-xl space-y-2">
-                  <div className="flex items-center justify-between text-xs text-zinc-400 font-mono uppercase tracking-wider font-bold">
+                <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 text-zinc-900 dark:text-zinc-100 shadow-xl space-y-2">
+                  <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 font-mono uppercase tracking-wider font-bold">
                     <span>Problem Statement</span>
-                    <Badge variant="outline" className="border-zinc-800 text-emerald-400">
+                    <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 text-emerald-600 dark:text-emerald-400">
                       {firstQuestion.mode ?? 'Walkthrough'}
                     </Badge>
                   </div>
@@ -363,7 +363,7 @@ export default function SolveWorkspace() {
                       {firstQuestion.attachments.map((a) => (
                         <span
                           key={a.name}
-                          className="rounded-md bg-zinc-900 border border-zinc-800 px-2.5 py-1 text-xs font-mono text-zinc-300"
+                          className="rounded-md bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-2.5 py-1 text-xs font-mono text-zinc-700 dark:text-zinc-300"
                         >
                           {a.name}
                         </span>
@@ -403,34 +403,34 @@ export default function SolveWorkspace() {
 
             {/* RIGHT COLUMN: Dedicated AI Tutor Chat Panel */}
             <div className={`sticky top-20 ${mobileTab === 'solution' ? 'hidden lg:block' : 'block'}`}>
-              <Card className="flex flex-col h-[75vh] border-zinc-800 bg-zinc-950 shadow-2xl overflow-hidden rounded-2xl">
+              <Card className="flex flex-col h-[75vh] border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl overflow-hidden rounded-2xl">
                 {/* Chat Panel Header */}
-                <CardHeader className="border-b border-zinc-800 bg-zinc-900/90 px-4 py-3.5 flex flex-row items-center justify-between space-y-0">
+                <CardHeader className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/90 px-4 py-3.5 flex flex-row items-center justify-between space-y-0">
                   <div className="flex items-center gap-2">
-                    <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-950 text-emerald-400 font-bold border border-emerald-500/30">
+                    <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-500/30">
                       <Sparkles className="h-4 w-4" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-zinc-100">AI Tutor Assistant</h3>
-                      <p className="text-[10px] font-mono text-zinc-400">Ask follow-up questions in real-time</p>
+                      <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">AI Tutor Assistant</h3>
+                      <p className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400">Ask follow-up questions in real-time</p>
                     </div>
                   </div>
-                  <Badge className="bg-emerald-950 text-emerald-400 border-emerald-500/30 text-[10px]">
+                  <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-[10px]">
                     Online
                   </Badge>
                 </CardHeader>
 
                 {/* Scrollable Chat Messages Container */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-slim bg-zinc-950">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-slim bg-white dark:bg-zinc-950">
                   {followUpTurns.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-3">
-                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400">
+                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-400">
                         <MessageSquare className="h-5 w-5" />
                       </div>
-                      <p className="text-xs font-semibold text-zinc-200">
+                      <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
                         Have a question about the steps or derivation?
                       </p>
-                      <p className="text-[11px] text-zinc-400 leading-relaxed max-w-xs">
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs">
                         Ask follow-ups here — your answer stays fixed on the left!
                       </p>
                     </div>
@@ -449,14 +449,14 @@ export default function SolveWorkspace() {
                       return (
                         <div
                           key={turn.id}
-                          className="animate-fade rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3.5 space-y-1.5"
+                          className="animate-fade rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-3.5 space-y-1.5"
                         >
-                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 font-mono">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 font-mono">
                             <Sparkles className="h-3 w-3" />
                             <span>Stepwise Tutor</span>
                           </div>
                           {turn.text ? (
-                            <p className="text-xs leading-relaxed whitespace-pre-wrap text-zinc-200 font-medium">
+                            <p className="text-xs leading-relaxed whitespace-pre-wrap text-zinc-800 dark:text-zinc-200 font-medium">
                               {turn.text}
                             </p>
                           ) : (
@@ -470,7 +470,7 @@ export default function SolveWorkspace() {
                 </div>
 
                 {/* Dedicated Inline Chat Input Box (Pinned to Bottom) */}
-                <div className="border-t border-zinc-800 bg-zinc-900/90 p-3">
+                <div className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/90 p-3">
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -483,7 +483,7 @@ export default function SolveWorkspace() {
                       value={chatInputText}
                       onChange={(e) => setChatInputText(e.target.value)}
                       placeholder="Ask a follow-up about this problem..."
-                      className="flex-1 bg-zinc-950 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
+                      className="flex-1 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                     />
                     <Button
                       type="submit"

@@ -81,13 +81,13 @@ export default function PracticeWorkspace() {
   return (
     <div className="space-y-8">
       {/* Setup Card */}
-      <Card className="space-y-4 p-5 sm:p-6 border-zinc-800 bg-zinc-950/90 shadow-2xl backdrop-blur-md">
+      <Card className="space-y-4 p-5 sm:p-6 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/90 shadow-2xl backdrop-blur-md">
         <div>
-          <CardTitle className="text-base font-bold text-zinc-100 flex items-center gap-2">
-            <Layers className="h-5 w-5 text-emerald-400" />
+          <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <Layers className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             <span>Practice & Active Recall Setup</span>
           </CardTitle>
-          <CardDescription className="mt-1 text-xs leading-relaxed text-zinc-400">
+          <CardDescription className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
             Flashcards to drill recall, then a quiz that explains every answer — including the misconception behind wrong choices.
           </CardDescription>
         </div>
@@ -116,7 +116,7 @@ export default function PracticeWorkspace() {
         </div>
 
         <div>
-          <label htmlFor="topic" className="mb-1.5 block text-xs font-mono font-bold text-zinc-400 uppercase">
+          <label htmlFor="topic" className="mb-1.5 block text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400 uppercase">
             Topic to Practice
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -126,7 +126,7 @@ export default function PracticeWorkspace() {
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && generate()}
               placeholder="e.g. Balancing chemical equations / Kinematic vectors"
-              className="flex-1 bg-zinc-900 border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500"
+              className="flex-1 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
             />
             <Button
               type="button"
@@ -144,7 +144,7 @@ export default function PracticeWorkspace() {
       {error && <ErrorNote message={error} onRetry={generate} />}
 
       {loading && (
-        <div className="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6" aria-hidden="true">
+        <div className="space-y-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 p-6" aria-hidden="true">
           <SkeletonLine w="30%" />
           <SkeletonBlock h="9rem" />
           <div className="flex gap-2">
@@ -165,7 +165,7 @@ export default function PracticeWorkspace() {
       {set && !loading && (
         <div className="animate-fade space-y-6">
           {/* Tabs */}
-          <div className="flex gap-1 rounded-xl border border-zinc-800 bg-zinc-950 p-1">
+          <div className="flex gap-1 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-1">
             {(['flashcards', 'quiz'] as Tab[]).map((t) => (
               <button
                 key={t}
@@ -173,7 +173,7 @@ export default function PracticeWorkspace() {
                 className={`flex-1 rounded-lg py-2 text-xs font-semibold capitalize transition-all ${
                   tab === t
                     ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                 }`}
               >
                 {t} ({t === 'flashcards' ? set.flashcards.length : set.quiz.length})
@@ -187,17 +187,17 @@ export default function PracticeWorkspace() {
               <button
                 type="button"
                 onClick={() => setFlipped((v) => !v)}
-                className="group flex min-h-[14rem] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950/90 p-8 text-center shadow-2xl transition-all duration-200 hover:border-emerald-500/50"
+                className="group flex min-h-[14rem] w-full flex-col items-center justify-center gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/90 p-8 text-center shadow-2xl transition-all duration-200 hover:border-emerald-500/50"
               >
-                <Badge variant="outline" className="border-zinc-800 font-mono text-[10px] text-emerald-400 uppercase">
+                <Badge variant="outline" className="border-zinc-200 dark:border-zinc-800 font-mono text-[10px] text-emerald-600 dark:text-emerald-400 uppercase">
                   {flipped ? 'Answer Side' : 'Question Side'} · Card {cardIndex + 1} of {set.flashcards.length}
                 </Badge>
 
-                <p className={`text-sm sm:text-base leading-relaxed max-w-lg ${flipped ? 'text-zinc-300 font-medium' : 'font-bold text-zinc-100'}`}>
+                <p className={`text-sm sm:text-base leading-relaxed max-w-lg ${flipped ? 'text-zinc-700 dark:text-zinc-300 font-medium' : 'font-bold text-zinc-900 dark:text-zinc-100'}`}>
                   {flipped ? card.back : card.front}
                 </p>
 
-                <span className="text-[11px] font-mono text-zinc-500 group-hover:text-emerald-400 transition-colors">
+                <span className="text-[11px] font-mono text-zinc-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                   {flipped ? 'Click to see question' : 'Click card to flip'}
                 </span>
               </button>
@@ -211,7 +211,7 @@ export default function PracticeWorkspace() {
                     setFlipped(false);
                   }}
                   disabled={cardIndex === 0}
-                  className="border-zinc-800 bg-zinc-900 text-xs text-zinc-300 gap-1.5"
+                  className="border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 gap-1.5"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Previous</span>
@@ -222,7 +222,7 @@ export default function PracticeWorkspace() {
                     <span
                       key={i}
                       className={`h-1.5 rounded-full transition-all duration-200 ${
-                        i === cardIndex ? 'w-5 bg-emerald-500' : 'w-1.5 bg-zinc-800'
+                        i === cardIndex ? 'w-5 bg-emerald-500' : 'w-1.5 bg-zinc-300 dark:bg-zinc-800'
                       }`}
                     />
                   ))}
@@ -236,7 +236,7 @@ export default function PracticeWorkspace() {
                     setFlipped(false);
                   }}
                   disabled={cardIndex === set.flashcards.length - 1}
-                  className="border-zinc-800 bg-zinc-900 text-xs text-zinc-300 gap-1.5"
+                  className="border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 gap-1.5"
                 >
                   <span>Next</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -253,9 +253,9 @@ export default function PracticeWorkspace() {
                 return (
                   <Card
                     key={qi}
-                    className="space-y-3 border-zinc-800 bg-zinc-950 p-5 shadow-lg"
+                    className="space-y-3 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-lg"
                   >
-                    <h4 className="text-xs sm:text-sm font-bold text-zinc-100 leading-relaxed">
+                    <h4 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-relaxed">
                       {qi + 1}. {q.question}
                     </h4>
 
@@ -263,11 +263,11 @@ export default function PracticeWorkspace() {
                       {q.options.map((opt, oi) => {
                         const isPicked = choice === oi;
                         const isRight = oi === q.answerIndex;
-                        let borderStyle = 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700 text-zinc-300';
+                        let borderStyle = 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-800 dark:text-zinc-300';
 
-                        if (submitted && isRight) borderStyle = 'border-emerald-500 bg-emerald-950/30 text-emerald-300';
-                        else if (submitted && isPicked && !isRight) borderStyle = 'border-red-500 bg-red-950/30 text-red-300';
-                        else if (isPicked) borderStyle = 'border-emerald-500/60 bg-emerald-950/20 text-zinc-100';
+                        if (submitted && isRight) borderStyle = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300';
+                        else if (submitted && isPicked && !isRight) borderStyle = 'border-red-500 bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-300';
+                        else if (isPicked) borderStyle = 'border-emerald-500/60 bg-emerald-50 dark:bg-emerald-950/20 text-zinc-900 dark:text-zinc-100';
 
                         return (
                           <label
@@ -284,7 +284,7 @@ export default function PracticeWorkspace() {
                             />
                             <span className="flex-1">{opt}</span>
                             {submitted && isRight && (
-                              <Badge className="bg-emerald-950 text-emerald-300 border-emerald-500/30 text-[10px]">
+                              <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 text-[10px]">
                                 Correct
                               </Badge>
                             )}
@@ -294,8 +294,8 @@ export default function PracticeWorkspace() {
                     </div>
 
                     {submitted && (
-                      <p className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3.5 text-xs leading-relaxed text-zinc-300">
-                        <span className="font-bold text-emerald-400 block mb-1">Misconception Explanation:</span>
+                      <p className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-3.5 text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
+                        <span className="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">Misconception Explanation:</span>
                         {q.explanation}
                       </p>
                     )}
@@ -313,9 +313,9 @@ export default function PracticeWorkspace() {
                   Check My Answers
                 </Button>
               ) : (
-                <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:flex-row sm:items-center sm:justify-between shadow-xl">
-                  <p className="text-xs sm:text-sm text-zinc-200">
-                    You scored <span className="font-bold text-emerald-400">{score} / {set.quiz.length}</span>.{' '}
+                <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:flex-row sm:items-center sm:justify-between shadow-xl">
+                  <p className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-200">
+                    You scored <span className="font-bold text-emerald-600 dark:text-emerald-400">{score} / {set.quiz.length}</span>.{' '}
                     {score === set.quiz.length
                       ? 'Perfect score! Topic mastered.'
                       : 'Review explanations for missed questions above.'}
@@ -327,7 +327,7 @@ export default function PracticeWorkspace() {
                       setPicked({});
                       setSubmitted(false);
                     }}
-                    className="border-zinc-800 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800 gap-1.5 shrink-0"
+                    className="border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-800 gap-1.5 shrink-0"
                   >
                     <RotateCcw className="h-3.5 w-3.5 text-zinc-400" />
                     <span>Try Again</span>
